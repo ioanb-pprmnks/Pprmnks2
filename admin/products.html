@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Products | PAPERMONKS Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500&family=Geist:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24; }
+  body { background-color: #0B0D12; color: #e2e2e9; }
+  .glass-card { background: rgba(22,25,34,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(217,194,144,0.1); }
+  .sidebar-link { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:8px; font-family:'Geist',sans-serif; font-size:12px; letter-spacing:0.15em; color:#cec5b7; transition:all 0.2s; }
+  .sidebar-link:hover, .sidebar-link.active { background:rgba(217,194,144,0.08); color:#f6deaa; }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f6deaa", "primary-container": "#d9c290", "on-primary": "#3c2f09",
+          "surface": "#111318", "surface-container": "#1e1f25", "surface-container-lowest": "#0c0e13",
+          "on-surface": "#e2e2e9", "on-surface-variant": "#cec5b7", "outline-variant": "#4c463b"
+        },
+        fontFamily: { "headline-lg": ["Playfair Display"], "label-caps": ["Geist"], "body-sm": ["Inter"] }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="/src/site.css"/>
+</head>
+<body class="min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-64 flex-shrink-0 bg-surface-container-lowest border-r border-outline-variant/10 flex flex-col min-h-screen fixed left-0 top-0 z-40">
+    <div class="p-8 border-b border-outline-variant/10">
+      <a href="/index.html" class="font-headline-lg text-primary tracking-widest uppercase text-[18px] block">PAPERMONKS</a>
+      <span class="font-label-caps text-on-surface-variant text-[9px] mt-1 block">ADMIN PORTAL</span>
+    </div>
+    <nav class="flex-1 p-4 space-y-1">
+      <a href="/admin/index.html" class="sidebar-link">
+        <span class="material-symbols-outlined text-[18px]">dashboard</span>DASHBOARD
+      </a>
+      <a href="/admin/orders.html" class="sidebar-link">
+        <span class="material-symbols-outlined text-[18px]">receipt_long</span>ORDERS
+      </a>
+      <a href="/admin/products.html" class="sidebar-link active">
+        <span class="material-symbols-outlined text-[18px]">inventory_2</span>PRODUCTS
+      </a>
+      <div class="pt-4 mt-4 border-t border-outline-variant/10">
+        <a href="/shop.html" class="sidebar-link">
+          <span class="material-symbols-outlined text-[18px]">store</span>VIEW STORE
+        </a>
+        <button onclick="logout()" class="sidebar-link w-full text-left">
+          <span class="material-symbols-outlined text-[18px]">logout</span>SIGN OUT
+        </button>
+      </div>
+    </nav>
+  </aside>
+
+  <div class="ml-64 flex-1 min-h-screen">
+    <header class="h-16 border-b border-outline-variant/10 flex items-center justify-between px-8 bg-surface-container-lowest/50 backdrop-blur-sm sticky top-0 z-30">
+      <h1 class="font-label-caps text-on-surface">PRODUCT MANAGEMENT</h1>
+      <a href="/admin/edit-product.html" class="flex items-center gap-2 px-6 py-2 rounded-full border border-primary text-primary font-label-caps text-[11px] hover:bg-primary/10 transition-colors">
+        <span class="material-symbols-outlined text-[16px]">add</span>
+        NEW PRODUCT
+      </a>
+    </header>
+
+    <main class="p-8">
+      <!-- Search & Filter bar -->
+      <div class="glass-card rounded-xl p-6 mb-8 flex gap-6 items-center">
+        <div class="flex items-center gap-3 flex-1 bg-white/5 border border-outline-variant/20 rounded-lg px-4 py-3">
+          <span class="material-symbols-outlined text-on-surface-variant text-[18px]">search</span>
+          <input id="search" class="bg-transparent outline-none text-on-surface flex-1 text-sm placeholder:text-on-surface-variant/40" placeholder="Search products..."/>
+        </div>
+        <select id="category-filter" class="bg-surface-container border border-outline-variant/20 rounded-lg px-4 py-3 text-on-surface font-label-caps text-[11px] outline-none cursor-pointer">
+          <option value="">ALL CATEGORIES</option>
+          <option value="big">BIG EDITION</option>
+          <option value="mini">MINI EDITION</option>
+          <option value="bundle">BUNDLE</option>
+        </select>
+      </div>
+
+      <!-- Products table -->
+      <div class="glass-card rounded-xl overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-outline-variant/10">
+              <th class="text-left px-8 py-5 font-label-caps text-on-surface-variant text-[10px]">PRODUCT</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">ARTIST</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">CATEGORY</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">PRICE</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">STOCK</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="products-table"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    if (!sessionStorage.getItem('pm_admin')) window.location.href = '/admin/login.html'
+
+    import { products } from '/src/products.js'
+
+    let filtered = [...products]
+
+    function renderTable() {
+      const search = document.getElementById('search').value.toLowerCase()
+      const cat = document.getElementById('category-filter').value
+
+      filtered = products.filter(p => {
+        const matchSearch = !search || p.name.toLowerCase().includes(search) || p.artist.toLowerCase().includes(search)
+        const matchCat = !cat || p.category === cat
+        return matchSearch && matchCat
+      })
+
+      document.getElementById('products-table').innerHTML = filtered.map(p => `
+        <tr class="border-b border-outline-variant/5 hover:bg-primary/3 transition-colors group">
+          <td class="px-8 py-4">
+            <div class="flex items-center gap-4">
+              <img src="${p.image}" alt="${p.name}" class="w-12 h-12 object-cover rounded-lg border border-outline-variant/20"/>
+              <div>
+                <p class="font-label-caps text-on-surface text-[12px]">${p.name}</p>
+                <p class="text-on-surface-variant text-[11px]">#PM-${String(p.id).padStart(4,'0')}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-4 text-on-surface-variant text-sm">${p.artist}</td>
+          <td class="px-4 py-4">
+            <span class="font-label-caps text-[10px] px-3 py-1 rounded-full border border-primary/20 text-primary">${p.edition}</span>
+          </td>
+          <td class="px-4 py-4 text-primary">€${p.price}</td>
+          <td class="px-4 py-4">
+            <span class="font-label-caps text-[11px] ${p.stock <= 2 ? 'text-red-400' : p.stock <= 5 ? 'text-yellow-400' : 'text-green-400'}">${p.stock} units</span>
+          </td>
+          <td class="px-4 py-4">
+            <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+              <a href="/product.html?id=${p.id}" target="_blank" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+              </a>
+              <a href="/admin/edit-product.html?id=${p.id}" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-[18px]">edit</span>
+              </a>
+              <button class="text-on-surface-variant hover:text-red-400 transition-colors" onclick="confirmDelete(${p.id}, '${p.name}')">
+                <span class="material-symbols-outlined text-[18px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('')
+    }
+
+    document.getElementById('search').addEventListener('input', renderTable)
+    document.getElementById('category-filter').addEventListener('change', renderTable)
+
+    window.confirmDelete = (id, name) => {
+      if (confirm(`Delete "${name}"? This action cannot be undone.`)) {
+        alert(`"${name}" deleted (demo — no actual data changed).`)
+      }
+    }
+
+    window.logout = () => {
+      sessionStorage.removeItem('pm_admin')
+      window.location.href = '/admin/login.html'
+    }
+
+    renderTable()
+  </script>
+<script type="module" src="/src/site.js"></script>
+</body>
+</html>
+
+

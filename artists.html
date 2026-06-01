@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Artists | PAPERMONKS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24; }
+  body { background-color: #0B0D12; color: #e2e2e9; -webkit-font-smoothing: antialiased; }
+  .glass-card { background: rgba(22,25,34,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(217,194,144,0.1); }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #0c0e13; }
+  ::-webkit-scrollbar-thumb { background: #d9c290; }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f6deaa", "primary-container": "#d9c290", "on-primary": "#3c2f09",
+          "surface": "#111318", "surface-container": "#1e1f25", "surface-container-lowest": "#0c0e13",
+          "on-surface": "#e2e2e9", "on-surface-variant": "#cec5b7", "outline-variant": "#4c463b",
+          "ink-black": "#11141B", "background": "#111318"
+        },
+        spacing: { "section-gap": "160px", "edge-margin-desktop": "80px", "container-max": "1440px", "element-gap": "24px" },
+        fontFamily: {
+          "headline-lg": ["Playfair Display"], "display-lg": ["Playfair Display"],
+          "body-sm": ["Inter"], "label-caps": ["Geist"], "nav-link": ["Geist"],
+          "headline-xl": ["Playfair Display"], "body-md": ["Inter"]
+        },
+        fontSize: {
+          "headline-lg": ["32px", {lineHeight:"1.3",letterSpacing:"0.05em",fontWeight:"400"}],
+          "display-lg": ["64px", {lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"300"}],
+          "headline-xl": ["48px", {lineHeight:"1.2",letterSpacing:"0.05em",fontWeight:"400"}],
+          "label-caps": ["12px", {lineHeight:"1.0",letterSpacing:"0.2em",fontWeight:"500"}],
+          "nav-link": ["13px", {lineHeight:"1.0",letterSpacing:"0.15em",fontWeight:"400"}]
+        }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="/src/site.css"/>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-primary/10 flex justify-between items-center px-edge-margin-desktop h-20">
+  <a href="/index.html" class="font-headline-lg text-primary tracking-widest uppercase"><img src="/logo.png" alt="PAPERMONKS" class="h-7" style="filter: invert(87%) sepia(25%) saturate(700%) hue-rotate(3deg) brightness(107%);"/></a>
+  <div class="hidden md:flex gap-12">
+    <a href="/shop.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors">SHOP</a>
+    <a href="/story.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors">STORY</a>
+    <a href="/artists.html" class="font-nav-link text-nav-link text-primary border-b-2 border-primary pb-1">ARTISTS</a>
+    <a href="/contact.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors">CONTACT</a>
+  </div>
+  <a href="/cart.html" class="relative text-primary hover:opacity-80 p-2">
+    <span class="material-symbols-outlined">shopping_bag</span>
+    <span class="cart-count hidden absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+  </a>
+</nav>
+
+<main class="pt-32 pb-section-gap max-w-container-max mx-auto px-edge-margin-desktop">
+  <!-- Header -->
+  <section class="mb-24">
+    <span class="font-label-caps text-primary mb-6 block">ARTIȘTII NOȘTRI</span>
+    <h1 class="font-display-lg text-display-lg text-on-surface mb-6">Oamenii din <span class="italic text-primary">spatele pliurii</span></h1>
+    <p class="text-on-surface-variant max-w-2xl leading-relaxed">
+      Fiecare portofel poartă semnătura unui artist. Ei creează arta, noi o pliăm în format funcțional. Iată colectivul care face posibil Papermonks.
+    </p>
+  </section>
+
+  <!-- Artist Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-16 mb-section-gap" id="artists-grid"><!-- Rendered by JS --></div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="text-center py-20 border-t border-outline-variant/10">
+    <h3 class="font-headline-lg text-on-surface mb-6">Ești artist?</h3>
+    <p class="text-on-surface-variant mb-10 max-w-lg mx-auto">Dacă vrei să-ți vezi arta transformată în portofele și expusă într-o galerie ambulantă, trimite-ne un email. Vom face să se întâmple.</p>
+    <a href="/contact.html" class="px-10 py-4 rounded-full border border-primary text-primary font-label-caps hover:bg-primary/10 transition-all tracking-[0.2em]">
+      CONTACTEAZĂ-NE
+    </a>
+  </div>
+</main>
+
+<footer class="w-full py-12 bg-surface-container-lowest border-t border-outline-variant/10">
+  <div class="flex flex-col md:flex-row justify-between items-center px-edge-margin-desktop max-w-container-max mx-auto gap-8">
+    <span class="font-headline-lg text-primary uppercase tracking-widest">PAPERMONKS</span>
+    <span class="font-label-caps text-on-surface-variant text-[10px]">© 2024 PAPERMONKS. CRAFTED FOR THE METICULOUS.</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { cart } from '/src/cart.js'
+  import { products } from '/src/products.js'
+
+  cart.updateBadges()
+
+  // Build artists list from real product data
+  const artistMap = {}
+  products.forEach(p => {
+    if (!artistMap[p.artist]) {
+      artistMap[p.artist] = { name: p.artist, products: [], image: p.imageFallback }
+    }
+    artistMap[p.artist].products.push(p)
+  })
+
+  const artistList = Object.values(artistMap).filter(a => a.name !== 'Colecție')
+
+  const grid = document.getElementById('artists-grid')
+  grid.innerHTML = artistList.map((artist, i) => {
+    const bigCount = artist.products.filter(p => p.category === 'big').length
+    const miniCount = artist.products.filter(p => p.category === 'mini').length
+    const typeLabel = bigCount > 0 && miniCount > 0 ? 'BIG & MINI WALLET' :
+                      bigCount > 0 ? 'THE BIG WALLET' : 'THE MINI WALLET'
+    const encodedArtist = encodeURIComponent(artist.name)
+
+    return `
+    <article class="group ${i % 2 === 1 ? 'md:mt-16' : ''}">
+      <div class="relative aspect-[3/4] overflow-hidden mb-8 bg-surface-container">
+        <img class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 grayscale group-hover:grayscale-0"
+          src="${artist.image}" alt="${artist.name}" onerror="this.style.opacity='0.2'"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-ink-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-10">
+          <a href="/shop.html?artist=${encodedArtist}" class="font-label-caps text-primary border border-primary px-6 py-2 text-[11px] hover:bg-primary/10 transition-colors">
+            VEZI COLECȚIA
+          </a>
+        </div>
+      </div>
+      <span class="font-label-caps text-primary text-[10px] block mb-2">${typeLabel}</span>
+      <h2 class="font-headline-xl text-headline-xl text-on-surface mb-4">${artist.name}</h2>
+      <div class="flex gap-8 mt-4">
+        <div>
+          <span class="font-display-lg text-primary text-3xl block">${artist.products.length}</span>
+          <span class="font-label-caps text-on-surface-variant text-[10px]">MODELE</span>
+        </div>
+        <div class="self-end">
+          <a href="/shop.html?artist=${encodedArtist}" class="font-label-caps text-primary text-[10px] hover:underline">
+            SHOP →
+          </a>
+        </div>
+      </div>
+    </article>
+  `}).join('')
+</script>
+<script type="module" src="/src/site.js"></script>
+</body>
+</html>
+
+
+

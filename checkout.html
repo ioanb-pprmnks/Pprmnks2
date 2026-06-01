@@ -1,0 +1,371 @@
+﻿<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout | PAPERMONKS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24; }
+  body { background-color: #0c0e13; color: #e2e2e9; -webkit-font-smoothing: antialiased; }
+  .glass-card { background: #161922; border: 1px solid rgba(217,194,144,0.1); }
+  .form-input { width:100%; background:rgba(255,255,255,0.05); border:none; border-bottom:1px solid rgba(76,70,59,0.3); padding:16px 8px; color:#e2e2e9; outline:none; transition:border-color 0.3s; }
+  .form-input:focus { border-bottom-color:#D9C290; box-shadow:0 1px 0 0 rgba(217,194,144,0.4); }
+  .step-section { transition: all 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .step-disabled { opacity:0.4; pointer-events:none; }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f6deaa", "primary-container": "#d9c290", "on-primary": "#3c2f09",
+          "surface": "#111318", "surface-container": "#1e1f25", "surface-container-lowest": "#0c0e13",
+          "on-surface": "#e2e2e9", "on-surface-variant": "#cec5b7", "outline-variant": "#4c463b"
+        },
+        spacing: {
+          "section-gap": "160px", "edge-margin-desktop": "80px", "container-max": "1440px"
+        },
+        fontFamily: {
+          "headline-lg": ["Playfair Display"], "body-sm": ["Inter"],
+          "label-caps": ["Geist"], "nav-link": ["Geist"]
+        },
+        fontSize: {
+          "headline-lg": ["32px", {lineHeight:"1.3",letterSpacing:"0.05em"}],
+          "label-caps": ["12px", {lineHeight:"1.0",letterSpacing:"0.2em"}],
+          "nav-link": ["13px", {lineHeight:"1.0",letterSpacing:"0.15em"}]
+        }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="/src/site.css"/>
+</head>
+<body class="font-body-sm text-on-surface">
+
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 md:px-edge-margin-desktop h-20 bg-surface/80 backdrop-blur-md border-b border-primary/10">
+  <a href="/index.html" class="font-headline-lg text-primary tracking-widest uppercase"><img src="/logo.png" alt="PAPERMONKS" class="h-7" style="filter: invert(87%) sepia(25%) saturate(700%) hue-rotate(3deg) brightness(107%);"/></a>
+  <div class="hidden md:flex gap-12">
+    <a href="/shop.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors">SHOP</a>
+    <a href="/story.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors">STORY</a>
+    <a href="/artists.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors">ARTISTS</a>
+    <a href="/contact.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors">CONTACT</a>
+  </div>
+  <div>
+    <a href="/cart.html">
+      <span class="material-symbols-outlined text-primary">shopping_bag</span>
+    </a>
+  </div>
+</nav>
+
+<main class="pt-32 pb-section-gap max-w-container-max mx-auto px-edge-margin-desktop min-h-screen">
+
+  <!-- Success overlay (hidden by default) -->
+  <div id="success-overlay" class="hidden fixed inset-0 z-50 bg-surface-container-lowest flex flex-col items-center justify-center text-center px-8">
+    <span class="material-symbols-outlined text-primary text-8xl mb-8 opacity-80">check_circle</span>
+    <h2 class="font-headline-lg text-headline-lg text-primary mb-4">Order Confirmed</h2>
+    <p class="text-on-surface-variant mb-4">Thank you for your purchase. Your art is being prepared.</p>
+    <p class="font-label-caps text-primary text-[11px] mb-12">ORDER #PM-<span id="order-num"></span></p>
+    <a href="/shop.html" class="px-10 py-4 rounded-full border border-primary text-primary font-label-caps hover:bg-primary/10 transition-all tracking-[0.2em]">
+      CONTINUE SHOPPING
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+    <!-- Checkout form -->
+    <div class="lg:col-span-7">
+      <header class="mb-12">
+        <h1 class="font-headline-lg text-headline-lg text-primary mb-8">Secure Checkout</h1>
+        <!-- Progress steps -->
+        <div class="flex justify-between items-center relative">
+          <div class="absolute h-px bg-outline-variant/30 top-4 left-0 right-0 -z-10"></div>
+          <div class="step-indicator flex flex-col items-center gap-2 bg-surface-container-lowest px-2" data-step="1">
+            <span class="w-8 h-8 rounded-full border border-primary flex items-center justify-center text-[10px] font-label-caps text-primary step-num">01</span>
+            <span class="font-label-caps text-primary text-[10px]">CONTACT</span>
+          </div>
+          <div class="step-indicator flex flex-col items-center gap-2 bg-surface-container-lowest px-2 opacity-40" data-step="2">
+            <span class="w-8 h-8 rounded-full border border-outline-variant/50 flex items-center justify-center text-[10px] font-label-caps text-on-surface-variant">02</span>
+            <span class="font-label-caps text-on-surface-variant text-[10px]">SHIPPING</span>
+          </div>
+          <div class="step-indicator flex flex-col items-center gap-2 bg-surface-container-lowest px-2 opacity-40" data-step="3">
+            <span class="w-8 h-8 rounded-full border border-outline-variant/50 flex items-center justify-center text-[10px] font-label-caps text-on-surface-variant">03</span>
+            <span class="font-label-caps text-on-surface-variant text-[10px]">PAYMENT</span>
+          </div>
+          <div class="step-indicator flex flex-col items-center gap-2 bg-surface-container-lowest px-2 opacity-40" data-step="4">
+            <span class="w-8 h-8 rounded-full border border-outline-variant/50 flex items-center justify-center text-[10px] font-label-caps text-on-surface-variant">04</span>
+            <span class="font-label-caps text-on-surface-variant text-[10px]">REVIEW</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="glass-card p-8 md:p-12 rounded-lg space-y-12">
+        <!-- Step 1: Contact -->
+        <section class="step-section" id="step-1">
+          <h2 class="font-label-caps text-on-surface-variant mb-8">01. CONTACT INFORMATION</h2>
+          <div class="grid gap-8">
+            <div>
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">Email Address *</label>
+              <input id="email" class="form-input" type="email" placeholder="your@email.com"/>
+            </div>
+            <div class="flex items-center gap-3">
+              <input id="newsletter" type="checkbox" class="rounded bg-surface border-outline-variant text-primary"/>
+              <label for="newsletter" class="text-on-surface-variant text-sm">Keep me updated on new releases and private exhibitions</label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 2: Shipping (locked initially) -->
+        <section class="step-section step-disabled" id="step-2">
+          <h2 class="font-label-caps text-on-surface-variant mb-8">02. SHIPPING ADDRESS</h2>
+          <div class="grid grid-cols-2 gap-8">
+            <div>
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">First Name *</label>
+              <input id="first-name" class="form-input" type="text" placeholder="Julian"/>
+            </div>
+            <div>
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">Last Name *</label>
+              <input id="last-name" class="form-input" type="text" placeholder="Voss"/>
+            </div>
+            <div class="col-span-2">
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">Street Address *</label>
+              <input id="address" class="form-input" type="text" placeholder="123 Studio Lane"/>
+            </div>
+            <div>
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">City *</label>
+              <input id="city" class="form-input" type="text" placeholder="Bucharest"/>
+            </div>
+            <div>
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">Postal Code *</label>
+              <input id="postal" class="form-input" type="text" placeholder="010101"/>
+            </div>
+            <div class="col-span-2">
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">Country *</label>
+              <select id="country" class="form-input appearance-none cursor-pointer">
+                <option>Romania</option>
+                <option>Germany</option>
+                <option>France</option>
+                <option>United Kingdom</option>
+                <option>United States</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3: Payment (locked) -->
+        <section class="step-section step-disabled" id="step-3">
+          <h2 class="font-label-caps text-on-surface-variant mb-8">03. PAYMENT DETAILS</h2>
+          <div class="grid gap-8">
+            <div>
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">Card Number *</label>
+              <input id="card-num" class="form-input" type="text" placeholder="4242 4242 4242 4242" maxlength="19"/>
+            </div>
+            <div class="grid grid-cols-2 gap-8">
+              <div>
+                <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">Expiry Date *</label>
+                <input id="card-exp" class="form-input" type="text" placeholder="MM / YY" maxlength="7"/>
+              </div>
+              <div>
+                <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">CVV *</label>
+                <input id="card-cvv" class="form-input" type="text" placeholder="123" maxlength="4"/>
+              </div>
+            </div>
+            <div>
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2 uppercase tracking-widest">Name on Card *</label>
+              <input id="card-name" class="form-input" type="text" placeholder="JULIAN VOSS"/>
+            </div>
+          </div>
+        </section>
+
+        <!-- Actions -->
+        <div class="pt-8 border-t border-outline-variant/10 flex justify-between items-center">
+          <button id="back-btn" class="font-label-caps text-on-surface-variant hover:text-primary transition-colors text-[11px]">← BACK</button>
+          <button id="next-btn" class="px-10 py-4 rounded-full border-[1.5px] border-primary text-primary font-label-caps tracking-widest hover:bg-primary/10 transition-all duration-300 hover:scale-[1.02]">
+            CONTINUE TO SHIPPING
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary Sidebar -->
+    <aside class="lg:col-span-5">
+      <div class="sticky top-32 glass-card p-10 rounded-lg">
+        <h3 class="font-label-caps text-primary mb-10 pb-4 border-b border-primary/10">ORDER SUMMARY</h3>
+        <div class="space-y-8 mb-10" id="order-items">
+          <!-- Rendered by JS -->
+        </div>
+        <div class="space-y-4 pt-8 border-t border-outline-variant/10">
+          <div class="flex justify-between font-label-caps text-[11px] text-on-surface-variant tracking-widest">
+            <span>SUBTOTAL</span>
+            <span id="sidebar-subtotal">€0.00</span>
+          </div>
+          <div class="flex justify-between font-label-caps text-[11px] text-on-surface-variant tracking-widest">
+            <span>SHIPPING</span>
+            <span class="text-primary italic">CALCULATED NEXT STEP</span>
+          </div>
+          <div class="flex justify-between pt-6 border-t border-primary/20 text-primary font-headline-lg">
+            <span class="text-[16px] self-center">TOTAL</span>
+            <span id="sidebar-total">€0.00</span>
+          </div>
+        </div>
+        <div class="mt-10 flex items-center justify-center gap-3 text-on-surface-variant/40 py-3 border border-outline-variant/10 rounded-sm">
+          <span class="material-symbols-outlined text-[16px]">lock</span>
+          <span class="font-label-caps text-[10px] tracking-[0.25em]">SECURE SSL ENCRYPTED</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer class="w-full py-12 bg-surface-container-lowest border-t border-outline-variant/10">
+  <div class="flex flex-col md:flex-row justify-between items-center px-edge-margin-desktop max-w-container-max mx-auto gap-4">
+    <div class="font-label-caps text-on-surface-variant opacity-60 text-[10px]">© 2024 PAPERMONKS. CRAFTED FOR THE METICULOUS.</div>
+    <div class="flex gap-8">
+      <a class="font-label-caps text-on-surface-variant hover:text-primary transition-colors text-[11px]" href="#">Privacy</a>
+      <a class="font-label-caps text-on-surface-variant hover:text-primary transition-colors text-[11px]" href="#">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { cart } from '/src/cart.js'
+
+  let currentStep = 1
+  const totalSteps = 3
+  const stepLabels = ['CONTINUE TO SHIPPING', 'CONTINUE TO PAYMENT', 'PLACE ORDER']
+
+  // Render order summary
+  function renderSummary() {
+    const items = cart.getItems()
+    if (items.length === 0) {
+      window.location.href = '/cart.html'
+      return
+    }
+    const total = cart.getTotal()
+    document.getElementById('sidebar-subtotal').textContent = `€${total.toFixed(2)}`
+    document.getElementById('sidebar-total').textContent = `€${total.toFixed(2)}`
+    document.getElementById('order-items').innerHTML = items.map(item => `
+      <div class="flex gap-6 items-center">
+        <div class="relative w-20 h-20 bg-surface-container overflow-hidden rounded-sm border border-outline-variant/10 flex-shrink-0">
+          <img class="w-full h-full object-cover opacity-80" src="${item.image}" alt="${item.name}"/>
+          <span class="absolute -top-2 -right-2 w-5 h-5 bg-primary text-on-primary text-[10px] flex items-center justify-center rounded-full font-bold">${item.qty}</span>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-label-caps text-[12px] text-on-surface tracking-wider">${item.name.toUpperCase()}</h4>
+          <p class="text-[11px] text-on-surface-variant">${item.edition}</p>
+        </div>
+        <div class="text-sm text-primary">€${(item.price * item.qty).toFixed(2)}</div>
+      </div>
+    `).join('')
+  }
+
+  function updateStepUI() {
+    // Update step indicators
+    document.querySelectorAll('.step-indicator').forEach(el => {
+      const step = parseInt(el.dataset.step)
+      if (step <= currentStep) {
+        el.classList.remove('opacity-40')
+        el.querySelector('span').classList.replace('border-outline-variant/50', 'border-primary')
+        el.querySelector('span').classList.replace('text-on-surface-variant', 'text-primary')
+      } else {
+        el.classList.add('opacity-40')
+      }
+    })
+
+    // Lock/unlock sections
+    for (let i = 1; i <= 3; i++) {
+      const section = document.getElementById(`step-${i}`)
+      if (i <= currentStep) {
+        section.classList.remove('step-disabled')
+      } else {
+        section.classList.add('step-disabled')
+      }
+    }
+
+    // Update button label
+    const nextBtn = document.getElementById('next-btn')
+    nextBtn.textContent = stepLabels[currentStep - 1]
+    document.getElementById('back-btn').style.display = currentStep > 1 ? 'block' : 'none'
+  }
+
+  // Validation
+  function validateStep() {
+    if (currentStep === 1) {
+      const email = document.getElementById('email').value
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address.')
+        return false
+      }
+    }
+    if (currentStep === 2) {
+      const fields = ['first-name', 'last-name', 'address', 'city', 'postal']
+      for (const f of fields) {
+        if (!document.getElementById(f).value.trim()) {
+          alert('Please fill in all shipping fields.')
+          return false
+        }
+      }
+    }
+    if (currentStep === 3) {
+      const num = document.getElementById('card-num').value.replace(/\s/g, '')
+      if (num.length < 16) {
+        alert('Please enter a valid card number.')
+        return false
+      }
+      if (!document.getElementById('card-cvv').value) {
+        alert('Please enter your CVV.')
+        return false
+      }
+    }
+    return true
+  }
+
+  document.getElementById('next-btn').addEventListener('click', () => {
+    if (!validateStep()) return
+    if (currentStep < totalSteps) {
+      currentStep++
+      updateStepUI()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      // Place order
+      const orderNum = Math.floor(Math.random() * 90000) + 10000
+      document.getElementById('order-num').textContent = orderNum
+      cart.clear()
+      document.getElementById('success-overlay').classList.remove('hidden')
+    }
+  })
+
+  document.getElementById('back-btn').addEventListener('click', () => {
+    if (currentStep > 1) {
+      currentStep--
+      updateStepUI()
+    } else {
+      window.location.href = '/cart.html'
+    }
+  })
+
+  // Card number formatting
+  document.getElementById('card-num').addEventListener('input', (e) => {
+    let val = e.target.value.replace(/\D/g,'').substring(0,16)
+    e.target.value = val.replace(/(.{4})/g, '$1 ').trim()
+  })
+
+  document.getElementById('card-exp').addEventListener('input', (e) => {
+    let val = e.target.value.replace(/\D/g,'').substring(0,4)
+    if (val.length > 2) val = val.substring(0,2) + ' / ' + val.substring(2)
+    e.target.value = val
+  })
+
+  renderSummary()
+  updateStepUI()
+</script>
+<script type="module" src="/src/site.js"></script>
+</body>
+</html>
+
+
+

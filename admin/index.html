@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Dashboard | PAPERMONKS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500&family=Geist:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24; }
+  body { background-color: #0B0D12; color: #e2e2e9; -webkit-font-smoothing: antialiased; }
+  .glass-card { background: rgba(22,25,34,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(217,194,144,0.1); }
+  .sidebar-link { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:8px; font-family:'Geist',sans-serif; font-size:12px; letter-spacing:0.15em; color:#cec5b7; transition:all 0.2s; }
+  .sidebar-link:hover, .sidebar-link.active { background:rgba(217,194,144,0.08); color:#f6deaa; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-thumb { background: #d9c290; }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f6deaa", "primary-container": "#d9c290", "on-primary": "#3c2f09",
+          "surface": "#111318", "surface-container": "#1e1f25", "surface-container-lowest": "#0c0e13",
+          "on-surface": "#e2e2e9", "on-surface-variant": "#cec5b7", "outline-variant": "#4c463b",
+          "alert-red": "#ef4444", "success": "#22c55e"
+        },
+        fontFamily: { "headline-lg": ["Playfair Display"], "label-caps": ["Geist"], "body-sm": ["Inter"] },
+        fontSize: {
+          "headline-lg": ["32px", {lineHeight:"1.3",letterSpacing:"0.05em"}],
+          "label-caps": ["12px", {lineHeight:"1.0",letterSpacing:"0.2em"}]
+        }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="/src/site.css"/>
+</head>
+<body class="min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-64 flex-shrink-0 bg-surface-container-lowest border-r border-outline-variant/10 flex flex-col min-h-screen fixed left-0 top-0 z-40">
+    <div class="p-8 border-b border-outline-variant/10">
+      <a href="/index.html" class="font-headline-lg text-primary tracking-widest uppercase text-[18px] block">PAPERMONKS</a>
+      <span class="font-label-caps text-on-surface-variant text-[9px] mt-1 block">ADMIN PORTAL</span>
+    </div>
+    <nav class="flex-1 p-4 space-y-1">
+      <a href="/admin/index.html" class="sidebar-link active">
+        <span class="material-symbols-outlined text-[18px]">dashboard</span>
+        DASHBOARD
+      </a>
+      <a href="/admin/orders.html" class="sidebar-link">
+        <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+        ORDERS
+      </a>
+      <a href="/admin/products.html" class="sidebar-link">
+        <span class="material-symbols-outlined text-[18px]">inventory_2</span>
+        PRODUCTS
+      </a>
+      <div class="pt-4 mt-4 border-t border-outline-variant/10">
+        <a href="/shop.html" class="sidebar-link">
+          <span class="material-symbols-outlined text-[18px]">store</span>
+          VIEW STORE
+        </a>
+        <button onclick="logout()" class="sidebar-link w-full text-left">
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+          SIGN OUT
+        </button>
+      </div>
+    </nav>
+    <div class="p-6 border-t border-outline-variant/10">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary text-[16px]">person</span>
+        </div>
+        <div>
+          <p class="font-label-caps text-on-surface text-[11px]">ADMIN</p>
+          <p class="text-on-surface-variant text-[10px]">admin@papermonks.art</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="ml-64 flex-1 min-h-screen">
+    <!-- Topbar -->
+    <header class="h-16 border-b border-outline-variant/10 flex items-center justify-between px-8 bg-surface-container-lowest/50 backdrop-blur-sm sticky top-0 z-30">
+      <h1 class="font-label-caps text-on-surface">DASHBOARD OVERVIEW</h1>
+      <div class="flex items-center gap-4">
+        <span class="font-label-caps text-on-surface-variant text-[11px]" id="current-date"></span>
+        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+      </div>
+    </header>
+
+    <main class="p-8 space-y-8">
+      <!-- KPI Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="glass-card rounded-xl p-6">
+          <div class="flex items-start justify-between mb-4">
+            <span class="material-symbols-outlined text-primary opacity-60">euro</span>
+            <span class="font-label-caps text-green-400 text-[10px]">+12.4%</span>
+          </div>
+          <p class="font-headline-lg text-[28px] text-primary mb-1">€4,820</p>
+          <p class="font-label-caps text-on-surface-variant text-[10px]">REVENUE THIS MONTH</p>
+        </div>
+        <div class="glass-card rounded-xl p-6">
+          <div class="flex items-start justify-between mb-4">
+            <span class="material-symbols-outlined text-primary opacity-60">shopping_bag</span>
+            <span class="font-label-caps text-green-400 text-[10px]">+8.1%</span>
+          </div>
+          <p class="font-headline-lg text-[28px] text-primary mb-1">43</p>
+          <p class="font-label-caps text-on-surface-variant text-[10px]">ORDERS THIS MONTH</p>
+        </div>
+        <div class="glass-card rounded-xl p-6">
+          <div class="flex items-start justify-between mb-4">
+            <span class="material-symbols-outlined text-primary opacity-60">inventory_2</span>
+            <span class="font-label-caps text-yellow-400 text-[10px]">3 LOW</span>
+          </div>
+          <p class="font-headline-lg text-[28px] text-primary mb-1">10</p>
+          <p class="font-label-caps text-on-surface-variant text-[10px]">ACTIVE PRODUCTS</p>
+        </div>
+        <div class="glass-card rounded-xl p-6">
+          <div class="flex items-start justify-between mb-4">
+            <span class="material-symbols-outlined text-primary opacity-60">group</span>
+            <span class="font-label-caps text-green-400 text-[10px]">+24.3%</span>
+          </div>
+          <p class="font-headline-lg text-[28px] text-primary mb-1">312</p>
+          <p class="font-label-caps text-on-surface-variant text-[10px]">TOTAL CUSTOMERS</p>
+        </div>
+      </div>
+
+      <!-- Recent Orders + Stock Alerts -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Recent Orders -->
+        <div class="lg:col-span-2 glass-card rounded-xl overflow-hidden">
+          <div class="flex items-center justify-between px-8 py-6 border-b border-outline-variant/10">
+            <h2 class="font-label-caps text-on-surface">RECENT ORDERS</h2>
+            <a href="/admin/orders.html" class="font-label-caps text-primary text-[10px] hover:underline">VIEW ALL</a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-outline-variant/10">
+                  <th class="text-left px-8 py-4 font-label-caps text-on-surface-variant text-[10px]">ORDER</th>
+                  <th class="text-left px-4 py-4 font-label-caps text-on-surface-variant text-[10px]">CUSTOMER</th>
+                  <th class="text-left px-4 py-4 font-label-caps text-on-surface-variant text-[10px]">PRODUCT</th>
+                  <th class="text-left px-4 py-4 font-label-caps text-on-surface-variant text-[10px]">TOTAL</th>
+                  <th class="text-left px-4 py-4 font-label-caps text-on-surface-variant text-[10px]">STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Stock Alerts -->
+        <div class="glass-card rounded-xl overflow-hidden">
+          <div class="px-8 py-6 border-b border-outline-variant/10">
+            <h2 class="font-label-caps text-on-surface">STOCK ALERTS</h2>
+          </div>
+          <div class="p-6 space-y-4" id="stock-alerts">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Products -->
+      <div class="glass-card rounded-xl overflow-hidden">
+        <div class="flex items-center justify-between px-8 py-6 border-b border-outline-variant/10">
+          <h2 class="font-label-caps text-on-surface">TOP PRODUCTS</h2>
+          <a href="/admin/products.html" class="font-label-caps text-primary text-[10px] hover:underline">MANAGE ALL</a>
+        </div>
+        <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-6" id="top-products">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    // Auth check
+    if (!sessionStorage.getItem('pm_admin')) {
+      window.location.href = '/admin/login.html'
+    }
+
+    import { products } from '/src/products.js'
+
+    // Date
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-GB', {weekday:'long',year:'numeric',month:'long',day:'numeric'})
+
+    // Mock orders
+    const orders = [
+      {id:'PM-18423',customer:'Julian Voss',product:'The Orix Wallet',total:'€185',status:'shipped',statusColor:'text-green-400'},
+      {id:'PM-18422',customer:'Elena Kova',product:'Nebula Fold',total:'€18',status:'processing',statusColor:'text-yellow-400'},
+      {id:'PM-18421',customer:'Marcus Lei',product:'Triptych Gold',total:'€22',status:'delivered',statusColor:'text-green-400'},
+      {id:'PM-18420',customer:'Sara Mihail',product:'Obsidian XL',total:'€85',status:'processing',statusColor:'text-yellow-400'},
+      {id:'PM-18419',customer:'Dan Popescu',product:'Azure Crane',total:'€8',status:'cancelled',statusColor:'text-red-400'},
+    ]
+
+    document.getElementById('orders-table').innerHTML = orders.map(o => `
+      <tr class="border-b border-outline-variant/5 hover:bg-primary/2 transition-colors">
+        <td class="px-8 py-4 font-label-caps text-primary text-[11px]">${o.id}</td>
+        <td class="px-4 py-4 text-on-surface text-sm">${o.customer}</td>
+        <td class="px-4 py-4 text-on-surface-variant text-sm">${o.product}</td>
+        <td class="px-4 py-4 text-primary text-sm">${o.total}</td>
+        <td class="px-4 py-4">
+          <span class="font-label-caps text-[10px] ${o.statusColor}">${o.status.toUpperCase()}</span>
+        </td>
+      </tr>
+    `).join('')
+
+    // Stock alerts
+    const lowStock = products.filter(p => p.stock <= 5)
+    document.getElementById('stock-alerts').innerHTML = lowStock.map(p => `
+      <div class="flex items-center gap-4 p-4 rounded-lg ${p.stock <= 2 ? 'bg-red-950/30 border border-red-500/20' : 'bg-yellow-950/20 border border-yellow-500/20'}">
+        <img src="${p.image}" alt="${p.name}" class="w-10 h-10 object-cover rounded"/>
+        <div class="flex-1 min-w-0">
+          <p class="font-label-caps text-on-surface text-[11px] truncate">${p.name}</p>
+          <p class="${p.stock <= 2 ? 'text-red-400' : 'text-yellow-400'} text-[10px] font-label-caps">${p.stock} LEFT</p>
+        </div>
+      </div>
+    `).join('')
+
+    // Top products
+    const topProds = [...products].sort((a,b) => b.price - a.price).slice(0,3)
+    document.getElementById('top-products').innerHTML = topProds.map(p => `
+      <div class="flex items-center gap-4">
+        <img src="${p.image}" alt="${p.name}" class="w-16 h-16 object-cover rounded-lg border border-outline-variant/20"/>
+        <div class="flex-1">
+          <p class="font-label-caps text-on-surface text-[12px] mb-1">${p.name.toUpperCase()}</p>
+          <p class="text-on-surface-variant text-[11px]">By ${p.artist}</p>
+          <p class="text-primary mt-1">€${p.price}</p>
+        </div>
+        <span class="font-label-caps text-[10px] px-2 py-1 rounded-full border ${p.stock <= 5 ? 'border-yellow-500/30 text-yellow-400' : 'border-green-500/30 text-green-400'}">${p.stock} left</span>
+      </div>
+    `).join('')
+
+    window.logout = () => {
+      sessionStorage.removeItem('pm_admin')
+      window.location.href = '/admin/login.html'
+    }
+  </script>
+<script type="module" src="/src/site.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,249 @@
+﻿<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Edit Product | PAPERMONKS Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500&family=Geist:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24; }
+  body { background-color: #0B0D12; color: #e2e2e9; }
+  .glass-card { background: rgba(22,25,34,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(217,194,144,0.1); }
+  .sidebar-link { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:8px; font-family:'Geist',sans-serif; font-size:12px; letter-spacing:0.15em; color:#cec5b7; transition:all 0.2s; }
+  .sidebar-link:hover, .sidebar-link.active { background:rgba(217,194,144,0.08); color:#f6deaa; }
+  .form-input { width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(76,70,59,0.3); border-radius:8px; padding:12px 16px; color:#e2e2e9; outline:none; transition:border-color 0.3s; font-family:'Inter',sans-serif; font-size:14px; }
+  .form-input:focus { border-color:#D9C290; }
+  textarea.form-input { min-height:120px; resize:vertical; }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f6deaa", "surface": "#111318", "surface-container": "#1e1f25",
+          "surface-container-lowest": "#0c0e13", "on-surface": "#e2e2e9",
+          "on-surface-variant": "#cec5b7", "outline-variant": "#4c463b"
+        },
+        fontFamily: { "headline-lg": ["Playfair Display"], "label-caps": ["Geist"] }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="/src/site.css"/>
+</head>
+<body class="min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-64 flex-shrink-0 bg-surface-container-lowest border-r border-outline-variant/10 flex flex-col min-h-screen fixed left-0 top-0 z-40">
+    <div class="p-8 border-b border-outline-variant/10">
+      <a href="/index.html" class="font-headline-lg text-primary tracking-widest uppercase text-[18px] block">PAPERMONKS</a>
+      <span class="font-label-caps text-on-surface-variant text-[9px] mt-1 block">ADMIN PORTAL</span>
+    </div>
+    <nav class="flex-1 p-4 space-y-1">
+      <a href="/admin/index.html" class="sidebar-link">
+        <span class="material-symbols-outlined text-[18px]">dashboard</span>DASHBOARD
+      </a>
+      <a href="/admin/orders.html" class="sidebar-link">
+        <span class="material-symbols-outlined text-[18px]">receipt_long</span>ORDERS
+      </a>
+      <a href="/admin/products.html" class="sidebar-link active">
+        <span class="material-symbols-outlined text-[18px]">inventory_2</span>PRODUCTS
+      </a>
+      <div class="pt-4 mt-4 border-t border-outline-variant/10">
+        <a href="/shop.html" class="sidebar-link">
+          <span class="material-symbols-outlined text-[18px]">store</span>VIEW STORE
+        </a>
+        <button onclick="logout()" class="sidebar-link w-full text-left">
+          <span class="material-symbols-outlined text-[18px]">logout</span>SIGN OUT
+        </button>
+      </div>
+    </nav>
+  </aside>
+
+  <div class="ml-64 flex-1 min-h-screen">
+    <header class="h-16 border-b border-outline-variant/10 flex items-center justify-between px-8 bg-surface-container-lowest/50 backdrop-blur-sm sticky top-0 z-30">
+      <div class="flex items-center gap-4">
+        <a href="/admin/products.html" class="text-on-surface-variant hover:text-primary transition-colors">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h1 class="font-label-caps text-on-surface" id="page-title">NEW PRODUCT</h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="saveDraft()" class="px-6 py-2 rounded-full border border-outline-variant/40 text-on-surface-variant font-label-caps text-[11px] hover:border-primary transition-all">
+          SAVE DRAFT
+        </button>
+        <button onclick="publishProduct()" class="px-6 py-2 rounded-full border border-primary text-primary font-label-caps text-[11px] hover:bg-primary/10 transition-all">
+          PUBLISH
+        </button>
+      </div>
+    </header>
+
+    <main class="p-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main form -->
+        <div class="lg:col-span-2 space-y-8">
+          <div class="glass-card rounded-xl p-8">
+            <h2 class="font-label-caps text-on-surface-variant mb-6 text-[11px]">PRODUCT DETAILS</h2>
+            <div class="space-y-6">
+              <div>
+                <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2">PRODUCT NAME</label>
+                <input id="f-name" class="form-input" type="text" placeholder="e.g. Nebula Fold"/>
+              </div>
+              <div class="grid grid-cols-2 gap-6">
+                <div>
+                  <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2">ARTIST</label>
+                  <select id="f-artist" class="form-input cursor-pointer">
+                    <option>Arta Lupe</option>
+                    <option>Kensho</option>
+                    <option>Orizuru</option>
+                    <option>Lucia Jantos</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2">CATEGORY</label>
+                  <select id="f-category" class="form-input cursor-pointer">
+                    <option value="big">Big Edition</option>
+                    <option value="mini">Mini Edition</option>
+                    <option value="bundle">Bundle</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2">DESCRIPTION</label>
+                <textarea id="f-description" class="form-input" placeholder="Describe the piece..."></textarea>
+              </div>
+              <div>
+                <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2">MATERIALS</label>
+                <textarea id="f-materials" class="form-input" placeholder="Materials used..."></textarea>
+              </div>
+              <div>
+                <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2">DIMENSIONS & WEIGHT</label>
+                <input id="f-dimensions" class="form-input" type="text" placeholder="e.g. 100mm x 85mm x 5mm. Weight: 19g"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-xl p-8">
+            <h2 class="font-label-caps text-on-surface-variant mb-6 text-[11px]">PRODUCT IMAGE</h2>
+            <div class="border-2 border-dashed border-outline-variant/30 rounded-xl p-12 text-center hover:border-primary/30 transition-colors cursor-pointer">
+              <span class="material-symbols-outlined text-primary text-4xl mb-4 block opacity-40">add_photo_alternate</span>
+              <p class="font-label-caps text-on-surface-variant text-[11px]">DRAG & DROP OR CLICK TO UPLOAD</p>
+              <p class="text-on-surface-variant text-sm mt-2">PNG, JPG up to 10MB</p>
+            </div>
+            <div class="mt-4">
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2">OR ENTER IMAGE URL</label>
+              <input id="f-image" class="form-input" type="url" placeholder="https://..."/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-8">
+          <div class="glass-card rounded-xl p-8">
+            <h2 class="font-label-caps text-on-surface-variant mb-6 text-[11px]">PRICING & INVENTORY</h2>
+            <div class="space-y-6">
+              <div>
+                <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2">PRICE (€)</label>
+                <input id="f-price" class="form-input" type="number" min="0" step="0.01" placeholder="0.00"/>
+              </div>
+              <div>
+                <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2">STOCK QUANTITY</label>
+                <input id="f-stock" class="form-input" type="number" min="0" placeholder="0"/>
+              </div>
+              <div>
+                <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-2">EDITION LABEL</label>
+                <input id="f-edition" class="form-input" type="text" placeholder="e.g. LIMITED EDITION"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-xl p-8">
+            <h2 class="font-label-caps text-on-surface-variant mb-6 text-[11px]">SHIPPING INFO</h2>
+            <textarea id="f-shipping" class="form-input" placeholder="Shipping & returns policy..."></textarea>
+          </div>
+
+          <!-- Preview -->
+          <div class="glass-card rounded-xl p-6" id="preview-card">
+            <h2 class="font-label-caps text-on-surface-variant mb-4 text-[11px]">LIVE PREVIEW</h2>
+            <div id="preview-image" class="aspect-[4/5] bg-surface-container rounded-lg overflow-hidden mb-4 flex items-center justify-center">
+              <span class="material-symbols-outlined text-on-surface-variant text-4xl opacity-20">image</span>
+            </div>
+            <p id="preview-name" class="font-label-caps text-primary text-[12px]">PRODUCT NAME</p>
+            <p id="preview-artist" class="text-on-surface-variant text-[11px] mt-1">Artist</p>
+            <p id="preview-price" class="text-primary mt-2">€0.00</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    if (!sessionStorage.getItem('pm_admin')) window.location.href = '/admin/login.html'
+
+    import { getProductById } from '/src/products.js'
+
+    // Load existing product if editing
+    const params = new URLSearchParams(window.location.search)
+    const id = params.get('id')
+    if (id) {
+      const product = getProductById(id)
+      if (product) {
+        document.getElementById('page-title').textContent = `EDIT: ${product.name.toUpperCase()}`
+        document.getElementById('f-name').value = product.name
+        document.getElementById('f-artist').value = product.artist
+        document.getElementById('f-category').value = product.category
+        document.getElementById('f-description').value = product.description
+        document.getElementById('f-materials').value = product.materials
+        document.getElementById('f-dimensions').value = product.dimensions
+        document.getElementById('f-price').value = product.price
+        document.getElementById('f-stock').value = product.stock
+        document.getElementById('f-edition').value = product.edition
+        document.getElementById('f-shipping').value = product.shipping
+        document.getElementById('f-image').value = product.image
+        updatePreview()
+      }
+    }
+
+    function updatePreview() {
+      const name = document.getElementById('f-name').value || 'PRODUCT NAME'
+      const artist = document.getElementById('f-artist').value || 'Artist'
+      const price = document.getElementById('f-price').value || '0.00'
+      const imgUrl = document.getElementById('f-image').value
+
+      document.getElementById('preview-name').textContent = name.toUpperCase()
+      document.getElementById('preview-artist').textContent = artist
+      document.getElementById('preview-price').textContent = `€${parseFloat(price || 0).toFixed(2)}`
+
+      const imgContainer = document.getElementById('preview-image')
+      if (imgUrl) {
+        imgContainer.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover" alt="Preview" onerror="this.parentElement.innerHTML='<span class=\\'material-symbols-outlined text-on-surface-variant text-4xl opacity-20\\'>broken_image</span>'/>"`
+      } else {
+        imgContainer.innerHTML = `<span class="material-symbols-outlined text-on-surface-variant text-4xl opacity-20">image</span>`
+      }
+    }
+
+    // Live preview updates
+    ['f-name','f-artist','f-price','f-image'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updatePreview)
+    })
+
+    window.saveDraft = () => alert('Draft saved (demo — no actual data stored).')
+    window.publishProduct = () => {
+      const name = document.getElementById('f-name').value
+      if (!name) { alert('Please enter a product name.'); return }
+      alert(`Product "${name}" published successfully (demo — no actual data stored).`)
+      window.location.href = '/admin/products.html'
+    }
+    window.logout = () => {
+      sessionStorage.removeItem('pm_admin')
+      window.location.href = '/admin/login.html'
+    }
+  </script>
+<script type="module" src="/src/site.js"></script>
+</body>
+</html>
+
+

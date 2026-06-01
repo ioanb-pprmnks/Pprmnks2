@@ -1,0 +1,361 @@
+﻿<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shop | PAPERMONKS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Inter:wght@400;500&family=Geist:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24; }
+  .glass-panel { background: rgba(22,25,34,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(217,194,144,0.1); }
+  /* 3D tilt — GPU accelerated, smooth */
+  .card-container {
+    perspective: 900px;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 420px;
+  }
+  .card-tilt {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: rotateY(0deg) rotateX(0deg) scale(1);
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  /* 3D tilt + hover effects only on devices that have a pointer */
+  @media (hover: hover) {
+    .card-tilt { will-change: transform; }
+    .card-tilt.is-hovering {
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(246,222,170,0.2);
+    }
+    .card-tilt .card-img { transition: transform 0.4s ease; }
+    .card-tilt.is-hovering .card-img { transform: scale(1.06); }
+  }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #0B0D12; }
+  ::-webkit-scrollbar-thumb { background: #D9C290; border-radius: 10px; }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f6deaa", "primary-container": "#d9c290", "on-primary": "#3c2f09",
+          "surface": "#111318", "surface-container": "#1e1f25", "surface-container-lowest": "#0c0e13",
+          "on-surface": "#e2e2e9", "on-surface-variant": "#cec5b7", "outline-variant": "#4c463b",
+          "ink-black": "#11141B", "background": "#111318"
+        },
+        spacing: {
+          "section-gap": "160px", "edge-margin-desktop": "80px",
+          "container-max": "1440px", "element-gap": "24px"
+        },
+        fontFamily: {
+          "headline-lg": ["Playfair Display"], "display-lg": ["Playfair Display"],
+          "body-sm": ["Inter"], "label-caps": ["Geist"], "nav-link": ["Geist"]
+        },
+        fontSize: {
+          "headline-lg": ["32px", {lineHeight:"1.3",letterSpacing:"0.05em",fontWeight:"400"}],
+          "display-lg": ["64px", {lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"300"}],
+          "label-caps": ["12px", {lineHeight:"1.0",letterSpacing:"0.2em",fontWeight:"500"}],
+          "nav-link": ["13px", {lineHeight:"1.0",letterSpacing:"0.15em",fontWeight:"400"}]
+        }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="/src/site.css"/>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary/30">
+
+<!-- Navigation -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-primary/10 shadow-sm transition-all duration-500">
+  <nav class="flex justify-between items-center px-edge-margin-desktop h-20 w-full">
+    <a href="/index.html" class="font-headline-lg text-primary tracking-widest uppercase"><img src="/logo.png" alt="PAPERMONKS" class="h-7" style="filter: invert(87%) sepia(25%) saturate(700%) hue-rotate(3deg) brightness(107%);"/></a>
+    <div class="hidden md:flex items-center gap-12">
+      <a href="/shop.html" class="font-nav-link text-nav-link text-primary border-b-2 border-primary pb-1">SHOP</a>
+      <a href="/story.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors duration-300">POVESTEA</a>
+      <a href="/artists.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors duration-300">ARTIȘTI</a>
+      <a href="/contact.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors duration-300">CONTACT</a>
+    </div>
+    <div class="flex items-center gap-6">
+      <a href="/cart.html" class="hover:opacity-80 transition-opacity p-2 relative">
+        <span class="material-symbols-outlined text-primary">shopping_bag</span>
+        <span class="cart-count hidden absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+      </a>
+    </div>
+  </nav>
+</header>
+
+<main class="pt-32 pb-24 max-w-[1200px] mx-auto px-6 md:px-12">
+  <section class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div>
+      <h1 class="text-on-surface mb-2" style="font-family:'Playfair Display',serif; font-size:clamp(36px,5vw,56px); font-weight:300;">Shop Collection</h1>
+      <p class="text-on-surface-variant text-sm">
+        22 modele · artiști români · fără lipici, fără cusături
+      </p>
+    </div>
+    <div class="flex items-center gap-3 text-on-surface-variant font-label-caps text-[11px] border-b border-outline-variant/30 pb-2">
+      <span>VIEWING</span>
+      <span class="text-primary" id="view-count">22 PRODUSE</span>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section class="mb-10 glass-panel rounded-xl p-5 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+    <div class="flex flex-wrap items-center gap-8">
+      <div class="flex flex-col gap-3">
+        <span class="font-label-caps text-on-surface-variant text-[10px]">FORMAT</span>
+        <div class="flex gap-2" id="filter-buttons">
+          <button data-filter="all" class="filter-btn px-4 py-2 rounded-full border border-primary text-primary font-label-caps bg-primary/5">All</button>
+          <button data-filter="big" class="filter-btn px-4 py-2 rounded-full border border-outline-variant/30 text-on-surface-variant font-label-caps hover:border-primary transition-all">Big</button>
+          <button data-filter="mini" class="filter-btn px-4 py-2 rounded-full border border-outline-variant/30 text-on-surface-variant font-label-caps hover:border-primary transition-all">Mini</button>
+          <button data-filter="bundle" class="filter-btn px-4 py-2 rounded-full border border-outline-variant/30 text-on-surface-variant font-label-caps hover:border-primary transition-all">Bundle</button>
+        </div>
+      </div>
+      <div class="flex flex-col gap-3">
+        <span class="font-label-caps text-on-surface-variant text-[10px]">PRICE RANGE</span>
+        <div class="flex items-center gap-4">
+          <input id="price-range" class="accent-primary bg-surface-container h-1 w-32 rounded-lg appearance-none cursor-pointer" type="range" min="0" max="200" value="200"/>
+          <span id="price-label" class="font-body-sm text-primary">UP TO €200</span>
+        </div>
+      </div>
+      <div class="flex flex-col gap-3">
+        <span class="font-label-caps text-on-surface-variant text-[10px]">ARTIST</span>
+        <select id="artist-filter" class="bg-transparent border-b border-outline-variant/30 text-on-surface font-label-caps focus:ring-0 focus:border-primary py-1 pr-8 outline-none appearance-none cursor-pointer">
+          <option value="">Toți artiștii</option>
+          <option value="Arta Lupe">Arta Lupe</option>
+          <option value="Coon & Crack">Coon & Crack</option>
+          <option value="Pulsar Synaps">Pulsar Synaps</option>
+          <option value="Pulsar Sinaps">Pulsar Sinaps</option>
+          <option value="Ioan">Ioan</option>
+          <option value="Vanderviata">Vanderviata</option>
+          <option value="Andrei Grigorescu">Andrei Grigorescu</option>
+          <option value="Bogdan Moraru">Bogdan Moraru</option>
+          <option value="Ioana Moldovan">Ioana Moldovan</option>
+          <option value="Toybox">Toybox</option>
+          <option value="Lucia Jantos">Lucia Jantos</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="font-label-caps text-on-surface-variant">SORT BY</span>
+      <select id="sort-select" class="bg-transparent border-b border-outline-variant/30 text-primary font-label-caps focus:ring-0 py-1 outline-none appearance-none cursor-pointer">
+        <option value="newest">NEWEST ARRIVALS</option>
+        <option value="price-asc">PRICE: LOW TO HIGH</option>
+        <option value="price-desc">PRICE: HIGH TO LOW</option>
+        <option value="name">NAME A–Z</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Product Grid -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 max-w-[1100px] mx-auto" id="product-grid">
+    <!-- Rendered by JS -->
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant/10 py-12">
+  <div class="flex flex-col md:flex-row justify-between items-center px-edge-margin-desktop max-w-container-max mx-auto gap-8">
+    <div class="font-headline-lg text-primary">PAPERMONKS</div>
+    <div class="flex gap-12 font-label-caps text-on-surface-variant">
+      <a class="hover:text-primary transition-colors" href="#">Instagram</a>
+      <a class="hover:text-primary transition-colors" href="#">Twitter</a>
+      <a class="hover:text-primary transition-colors" href="#">Privacy</a>
+      <a class="hover:text-primary transition-colors" href="#">Terms</a>
+    </div>
+    <div class="font-label-caps text-on-surface-variant text-[10px] tracking-widest">
+      © 2024 PAPERMONKS. CRAFTED FOR THE METICULOUS.
+    </div>
+  </div>
+</footer>
+
+<!-- Cart FAB -->
+<a href="/cart.html" class="fixed bottom-12 right-12 w-16 h-16 bg-primary-container text-on-primary rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform active:scale-95 group z-40">
+  <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">shopping_cart_checkout</span>
+</a>
+
+<script type="module">
+  import { products } from '/src/products.js'
+  import { cart } from '/src/cart.js'
+
+  // Read URL params for prefiltering
+  const urlParams = new URLSearchParams(window.location.search)
+  let currentFilter = urlParams.get('category') || 'all'
+  let currentMaxPrice = 200
+  let currentArtist = urlParams.get('artist') || ''
+  let currentSort = 'newest'
+
+  // Set active filter button from URL
+  if (currentFilter !== 'all') {
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      const isActive = b.dataset.filter === currentFilter
+      b.classList.toggle('border-primary', isActive)
+      b.classList.toggle('text-primary', isActive)
+      b.classList.toggle('bg-primary/5', isActive)
+      b.classList.toggle('border-outline-variant/30', !isActive)
+      b.classList.toggle('text-on-surface-variant', !isActive)
+    })
+  }
+
+  function renderProducts() {
+    let filtered = [...products]
+
+    if (currentFilter !== 'all') {
+      filtered = filtered.filter(p => p.category === currentFilter)
+    }
+    if (currentArtist) {
+      filtered = filtered.filter(p => p.artist === currentArtist)
+    }
+    filtered = filtered.filter(p => p.price <= currentMaxPrice)
+
+    if (currentSort === 'price-asc') filtered.sort((a,b) => a.price - b.price)
+    else if (currentSort === 'price-desc') filtered.sort((a,b) => b.price - a.price)
+    else if (currentSort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name))
+
+    document.getElementById('view-count').textContent = `${filtered.length} PRODUS${filtered.length !== 1 ? 'E' : ''}`
+
+    const grid = document.getElementById('product-grid')
+    grid.innerHTML = filtered.map(p => `
+      <div class="card-container">
+        <div class="card-tilt relative bg-surface-container rounded-lg overflow-hidden border border-primary/10">
+          <a href="/product.html?id=${p.id}" class="block">
+            <div class="aspect-[3/4] relative overflow-hidden">
+              <img class="card-img absolute inset-0 w-full h-full object-cover" src="${p.image}" alt="${p.name}" loading="lazy" decoding="async"/>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent"></div>
+              <div class="absolute top-3 left-3">
+                <span class="px-2 py-0.5 bg-black/75 text-primary text-[9px] rounded-full border border-primary/20 tracking-[0.12em]" style="font-family:'Geist',sans-serif;">${p.edition}</span>
+              </div>
+            </div>
+            <div class="px-4 pt-3 pb-1 flex justify-between items-start">
+              <div class="flex-1 min-w-0 pr-2">
+                <span class="text-on-surface-variant text-[9px] tracking-[0.15em] block mb-0.5 truncate" style="font-family:'Geist',sans-serif;">${p.artist.toUpperCase()}</span>
+                <h3 class="text-primary text-[15px] leading-tight truncate" style="font-family:'Playfair Display',serif;">${p.shortName}</h3>
+              </div>
+              <span class="text-on-surface text-[15px] flex-shrink-0" style="font-family:'Playfair Display',serif;">€${p.price}</span>
+            </div>
+          </a>
+          <div class="px-4 pb-4 pt-2">
+            <button data-product-id="${p.id}" class="add-to-cart-btn w-full py-2 rounded-full border border-primary/30 text-primary text-[9px] tracking-[0.18em] hover:bg-primary/10 hover:border-primary/60 transition-all duration-200" style="font-family:'Geist',sans-serif;">
+              ADD TO CART
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('')
+
+    // Add to cart handlers
+    grid.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation()
+        const id = parseInt(btn.dataset.productId)
+        const product = products.find(p => p.id === id)
+        if (product) cart.addItem(product)
+      })
+    })
+
+    // Smooth 3D tilt — throttled with rAF, fast response, smooth snap-back
+    grid.querySelectorAll('.card-container').forEach(container => {
+      const tilt = container.querySelector('.card-tilt')
+      let rafId = null
+      let targetX = 0, targetY = 0
+      let currentX = 0, currentY = 0
+
+      container.addEventListener('mouseenter', () => {
+        tilt.classList.add('is-hovering')
+        // Remove CSS transition during mouse tracking for instant response
+        tilt.style.transition = 'box-shadow 0.3s ease'
+      })
+
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect()
+        targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 14   // max ±7deg
+        targetY = ((e.clientY - rect.top) / rect.height - 0.5) * -14
+
+        if (!rafId) {
+          rafId = requestAnimationFrame(function animate() {
+            // Lerp toward target (0.2 = fast follow)
+            currentX += (targetX - currentX) * 0.2
+            currentY += (targetY - currentY) * 0.2
+            tilt.style.transform = `rotateY(${currentX}deg) rotateX(${currentY}deg) scale(1.025)`
+
+            // Keep animating if still moving
+            if (Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05) {
+              rafId = requestAnimationFrame(animate)
+            } else {
+              rafId = null
+            }
+          })
+        }
+      })
+
+      container.addEventListener('mouseleave', () => {
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null }
+        tilt.classList.remove('is-hovering')
+        // Restore CSS transition for smooth snap-back
+        tilt.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1)'
+        tilt.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)'
+        currentX = 0; currentY = 0; targetX = 0; targetY = 0
+      })
+    })
+  }
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentFilter = btn.dataset.filter
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('border-primary', b === btn)
+        b.classList.toggle('text-primary', b === btn)
+        b.classList.toggle('bg-primary/5', b === btn)
+        b.classList.toggle('border-outline-variant/30', b !== btn)
+        b.classList.toggle('text-on-surface-variant', b !== btn)
+      })
+      renderProducts()
+    })
+  })
+
+  document.getElementById('price-range').addEventListener('input', (e) => {
+    currentMaxPrice = parseInt(e.target.value)
+    document.getElementById('price-label').textContent = `UP TO €${currentMaxPrice}`
+    renderProducts()
+  })
+
+  document.getElementById('artist-filter').addEventListener('change', (e) => {
+    currentArtist = e.target.value
+    renderProducts()
+  })
+
+  document.getElementById('sort-select').addEventListener('change', (e) => {
+    currentSort = e.target.value
+    renderProducts()
+  })
+
+  // Scroll effect on header
+  let scrollRaf = null
+  window.addEventListener('scroll', () => {
+    if (scrollRaf) return
+    scrollRaf = requestAnimationFrame(() => {
+      const nav = document.querySelector('header')
+      if (window.scrollY > 20) {
+        nav.classList.add('h-16', 'bg-surface/95')
+        nav.classList.remove('h-20', 'bg-surface/80')
+      } else {
+        nav.classList.add('h-20', 'bg-surface/80')
+        nav.classList.remove('h-16', 'bg-surface/95')
+      }
+      scrollRaf = null
+    })
+  }, { passive: true })
+
+  renderProducts()
+  cart.updateBadges()
+</script>
+<script type="module" src="/src/site.js"></script>
+</body>
+</html>
+
+
+

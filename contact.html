@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact | PAPERMONKS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Inter:wght@300;400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24; }
+  body { background-color: #0B0D12; color: #e2e2e9; -webkit-font-smoothing: antialiased; }
+  .glass-card { background: rgba(22,25,34,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(217,194,144,0.1); }
+  .form-input { width:100%; background:rgba(255,255,255,0.04); border:none; border-bottom:1px solid rgba(76,70,59,0.4); padding:16px 8px; color:#e2e2e9; outline:none; transition:border-color 0.3s; font-family:'Inter',sans-serif; }
+  .form-input:focus { border-bottom-color:#D9C290; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #0c0e13; }
+  ::-webkit-scrollbar-thumb { background: #d9c290; }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f6deaa", "primary-container": "#d9c290", "on-primary": "#3c2f09",
+          "surface": "#111318", "surface-container": "#1e1f25", "surface-container-lowest": "#0c0e13",
+          "on-surface": "#e2e2e9", "on-surface-variant": "#cec5b7", "outline-variant": "#4c463b", "background": "#111318"
+        },
+        spacing: { "section-gap": "160px", "edge-margin-desktop": "80px", "container-max": "1440px" },
+        fontFamily: {
+          "headline-lg": ["Playfair Display"], "display-lg": ["Playfair Display"],
+          "body-sm": ["Inter"], "label-caps": ["Geist"], "nav-link": ["Geist"], "body-md": ["Inter"]
+        },
+        fontSize: {
+          "headline-lg": ["32px", {lineHeight:"1.3",letterSpacing:"0.05em",fontWeight:"400"}],
+          "display-lg": ["64px", {lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"300"}],
+          "label-caps": ["12px", {lineHeight:"1.0",letterSpacing:"0.2em",fontWeight:"500"}],
+          "nav-link": ["13px", {lineHeight:"1.0",letterSpacing:"0.15em",fontWeight:"400"}]
+        }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="/src/site.css"/>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-primary/10 flex justify-between items-center px-edge-margin-desktop h-20">
+  <a href="/index.html" class="font-headline-lg text-primary tracking-widest uppercase"><img src="/logo.png" alt="PAPERMONKS" class="h-7" style="filter: invert(87%) sepia(25%) saturate(700%) hue-rotate(3deg) brightness(107%);"/></a>
+  <div class="hidden md:flex gap-12">
+    <a href="/shop.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors">SHOP</a>
+    <a href="/story.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors">POVESTEA</a>
+    <a href="/artists.html" class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors">ARTIȘTI</a>
+    <a href="/contact.html" class="font-nav-link text-nav-link text-primary border-b-2 border-primary pb-1">CONTACT</a>
+  </div>
+  <a href="/cart.html" class="relative text-primary hover:opacity-80 p-2">
+    <span class="material-symbols-outlined">shopping_bag</span>
+    <span class="cart-count hidden absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+  </a>
+</nav>
+
+<main class="pt-32 pb-section-gap max-w-container-max mx-auto px-edge-margin-desktop">
+  <!-- Header -->
+  <section class="mb-24">
+    <span class="font-label-caps text-primary mb-6 block">CONTACT</span>
+    <h1 class="font-display-lg text-display-lg text-on-surface mb-6">Scrie-ne,<br/><span class="italic text-primary">suntem aici.</span></h1>
+    <p class="text-on-surface-variant max-w-xl leading-relaxed">
+      Vrei să cumperi, să colaborezi, sau pur și simplu ești curios despre cum funcționează? Scrie-ne și răspundem în 24h.
+    </p>
+  </section>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
+    <!-- Contact Form -->
+    <div class="lg:col-span-7">
+      <div class="glass-card p-10 md:p-14 rounded-xl">
+        <form id="contact-form" class="space-y-10">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div>
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-3 uppercase tracking-widest">First Name *</label>
+              <input name="first_name" class="form-input" type="text" placeholder="Julian" required/>
+            </div>
+            <div>
+              <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-3 uppercase tracking-widest">Last Name *</label>
+              <input name="last_name" class="form-input" type="text" placeholder="Voss" required/>
+            </div>
+          </div>
+          <div>
+            <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-3 uppercase tracking-widest">Email Address *</label>
+            <input name="email" class="form-input" type="email" placeholder="julian@studio.com" required/>
+          </div>
+          <div>
+            <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-3 uppercase tracking-widest">Subject</label>
+            <select name="subject" class="form-input appearance-none cursor-pointer">
+              <option>General Inquiry</option>
+              <option>Order Support</option>
+              <option>Artist Collaboration</option>
+              <option>Press & Media</option>
+              <option>Wholesale</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-label-caps text-[10px] text-on-surface-variant/70 mb-3 uppercase tracking-widest">Message *</label>
+            <textarea name="message" class="form-input min-h-[160px] resize-y" placeholder="Tell us about your inquiry..." required></textarea>
+          </div>
+          <div class="flex items-center gap-3">
+            <input name="consent" type="checkbox" id="consent" class="rounded bg-surface border-outline-variant text-primary" required/>
+            <label for="consent" class="text-on-surface-variant text-sm">I agree to PAPERMONKS' Privacy Policy</label>
+          </div>
+          <button type="submit" class="w-full py-5 rounded-full border-[1.5px] border-primary text-primary font-label-caps tracking-[0.2em] hover:bg-primary/10 transition-all duration-300">
+            SEND MESSAGE
+          </button>
+        </form>
+        <!-- Success message (hidden) -->
+        <div id="form-success" class="hidden text-center py-16">
+          <span class="material-symbols-outlined text-primary text-5xl mb-6 block">mark_email_read</span>
+          <h3 class="font-headline-lg text-on-surface mb-4">Message received.</h3>
+          <p class="text-on-surface-variant">We'll respond within 24 hours.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Sidebar -->
+    <aside class="lg:col-span-5 space-y-12 lg:sticky lg:top-32">
+      <div class="space-y-8">
+        <div class="flex items-start gap-6">
+          <div class="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary">camera_alt</span>
+          </div>
+          <div>
+            <h4 class="font-label-caps text-on-surface mb-2">INSTAGRAM</h4>
+            <a href="https://www.instagram.com/papermonks.ro" target="_blank" class="text-primary hover:underline text-sm">@papermonks.ro</a>
+            <p class="text-on-surface-variant text-sm mt-1">Cele mai noi modele și proiecte</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-6">
+          <div class="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary">mail</span>
+          </div>
+          <div>
+            <h4 class="font-label-caps text-on-surface mb-2">EMAIL</h4>
+            <a href="mailto:papermonksde@gmail.com" class="text-primary hover:underline text-sm">papermonksde@gmail.com</a>
+            <p class="text-on-surface-variant text-sm mt-1">Răspundem în 24h</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-6">
+          <div class="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary">phone</span>
+          </div>
+          <div>
+            <h4 class="font-label-caps text-on-surface mb-2">TELEFON</h4>
+            <a href="tel:+017631723486" class="text-primary hover:underline text-sm">017631723486</a>
+            <p class="text-on-surface-variant text-sm mt-1">Luni — Vineri, 10:00 — 18:00</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-6">
+          <div class="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary">palette</span>
+          </div>
+          <div>
+            <h4 class="font-label-caps text-on-surface mb-2">GALERIA 21</h4>
+            <a href="https://www.instagram.com/galeria21.bucuresti" target="_blank" class="text-primary hover:underline text-sm">@galeria21.bucuresti</a>
+            <p class="text-on-surface-variant text-sm mt-1">Proiectul nostru de artă urbană</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map placeholder -->
+      <div class="relative h-64 rounded-xl overflow-hidden border border-primary/10 bg-surface-container">
+        <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
+          <span class="material-symbols-outlined text-primary text-4xl opacity-30">map</span>
+          <span class="font-label-caps text-on-surface-variant text-[10px]">BUCHAREST, ROMANIA</span>
+        </div>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(217,194,144,0.05),transparent_70%)]"></div>
+      </div>
+
+      <!-- Social links -->
+      <div class="pt-8 border-t border-outline-variant/10">
+        <h4 class="font-label-caps text-on-surface-variant mb-6">FOLLOW US</h4>
+        <div class="flex gap-4">
+          <a href="#" class="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary/10 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">camera_alt</span>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary/10 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">alternate_email</span>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary/10 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">pin</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer class="w-full py-12 bg-surface-container-lowest border-t border-outline-variant/10 mt-20">
+  <div class="flex flex-col md:flex-row justify-between items-center px-edge-margin-desktop max-w-container-max mx-auto gap-8">
+    <span class="font-headline-lg text-primary uppercase tracking-widest">PAPERMONKS</span>
+    <span class="font-label-caps text-on-surface-variant text-[10px]">© 2024 PAPERMONKS. CRAFTED FOR THE METICULOUS.</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { cart } from '/src/cart.js'
+  cart.updateBadges()
+
+  document.getElementById('contact-form').addEventListener('submit', (e) => {
+    e.preventDefault()
+    document.getElementById('contact-form').style.display = 'none'
+    document.getElementById('form-success').classList.remove('hidden')
+  })
+</script>
+<script type="module" src="/src/site.js"></script>
+</body>
+</html>
+
+
+

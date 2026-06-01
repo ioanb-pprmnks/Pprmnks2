@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Orders | PAPERMONKS Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500&family=Geist:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24; }
+  body { background-color: #0B0D12; color: #e2e2e9; }
+  .glass-card { background: rgba(22,25,34,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(217,194,144,0.1); }
+  .sidebar-link { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:8px; font-family:'Geist',sans-serif; font-size:12px; letter-spacing:0.15em; color:#cec5b7; transition:all 0.2s; }
+  .sidebar-link:hover, .sidebar-link.active { background:rgba(217,194,144,0.08); color:#f6deaa; }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f6deaa", "surface": "#111318", "surface-container": "#1e1f25",
+          "surface-container-lowest": "#0c0e13", "on-surface": "#e2e2e9",
+          "on-surface-variant": "#cec5b7", "outline-variant": "#4c463b"
+        },
+        fontFamily: { "headline-lg": ["Playfair Display"], "label-caps": ["Geist"] }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="/src/site.css"/>
+</head>
+<body class="min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-64 flex-shrink-0 bg-surface-container-lowest border-r border-outline-variant/10 flex flex-col min-h-screen fixed left-0 top-0 z-40">
+    <div class="p-8 border-b border-outline-variant/10">
+      <a href="/index.html" class="font-headline-lg text-primary tracking-widest uppercase text-[18px] block">PAPERMONKS</a>
+      <span class="font-label-caps text-on-surface-variant text-[9px] mt-1 block">ADMIN PORTAL</span>
+    </div>
+    <nav class="flex-1 p-4 space-y-1">
+      <a href="/admin/index.html" class="sidebar-link">
+        <span class="material-symbols-outlined text-[18px]">dashboard</span>DASHBOARD
+      </a>
+      <a href="/admin/orders.html" class="sidebar-link active">
+        <span class="material-symbols-outlined text-[18px]">receipt_long</span>ORDERS
+      </a>
+      <a href="/admin/products.html" class="sidebar-link">
+        <span class="material-symbols-outlined text-[18px]">inventory_2</span>PRODUCTS
+      </a>
+      <div class="pt-4 mt-4 border-t border-outline-variant/10">
+        <a href="/shop.html" class="sidebar-link">
+          <span class="material-symbols-outlined text-[18px]">store</span>VIEW STORE
+        </a>
+        <button onclick="logout()" class="sidebar-link w-full text-left">
+          <span class="material-symbols-outlined text-[18px]">logout</span>SIGN OUT
+        </button>
+      </div>
+    </nav>
+  </aside>
+
+  <div class="ml-64 flex-1 min-h-screen">
+    <header class="h-16 border-b border-outline-variant/10 flex items-center justify-between px-8 bg-surface-container-lowest/50 backdrop-blur-sm sticky top-0 z-30">
+      <h1 class="font-label-caps text-on-surface">ORDER MANAGEMENT</h1>
+      <div class="flex items-center gap-4">
+        <span class="font-label-caps text-on-surface-variant text-[11px]">43 ORDERS THIS MONTH</span>
+      </div>
+    </header>
+
+    <main class="p-8">
+      <!-- Status filter tabs -->
+      <div class="flex gap-2 mb-8">
+        <button data-status="" class="status-tab px-5 py-2 rounded-full border border-primary text-primary font-label-caps text-[11px] bg-primary/5">ALL</button>
+        <button data-status="processing" class="status-tab px-5 py-2 rounded-full border border-outline-variant/30 text-on-surface-variant font-label-caps text-[11px] hover:border-primary transition-all">PROCESSING</button>
+        <button data-status="shipped" class="status-tab px-5 py-2 rounded-full border border-outline-variant/30 text-on-surface-variant font-label-caps text-[11px] hover:border-primary transition-all">SHIPPED</button>
+        <button data-status="delivered" class="status-tab px-5 py-2 rounded-full border border-outline-variant/30 text-on-surface-variant font-label-caps text-[11px] hover:border-primary transition-all">DELIVERED</button>
+        <button data-status="cancelled" class="status-tab px-5 py-2 rounded-full border border-outline-variant/30 text-on-surface-variant font-label-caps text-[11px] hover:border-primary transition-all">CANCELLED</button>
+      </div>
+
+      <!-- Orders table -->
+      <div class="glass-card rounded-xl overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-outline-variant/10">
+              <th class="text-left px-8 py-5 font-label-caps text-on-surface-variant text-[10px]">ORDER ID</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">CUSTOMER</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">PRODUCTS</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">DATE</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">TOTAL</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">STATUS</th>
+              <th class="text-left px-4 py-5 font-label-caps text-on-surface-variant text-[10px]">ACTION</th>
+            </tr>
+          </thead>
+          <tbody id="orders-table"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    if (!sessionStorage.getItem('pm_admin')) window.location.href = '/admin/login.html'
+
+    const orders = [
+      {id:'PM-18423',customer:'Julian Voss',email:'julian@studio.com',products:'The Orix Wallet',date:'2024-05-28',total:'€185',status:'shipped'},
+      {id:'PM-18422',customer:'Elena Kova',email:'elena@art.ro',products:'Nebula Fold × 2',date:'2024-05-28',total:'€36',status:'processing'},
+      {id:'PM-18421',customer:'Marcus Lei',email:'marcus@design.com',products:'Triptych Gold',date:'2024-05-27',total:'€22',status:'delivered'},
+      {id:'PM-18420',customer:'Sara Mihail',email:'sara@gmail.com',products:'Obsidian XL',date:'2024-05-27',total:'€85',status:'processing'},
+      {id:'PM-18419',customer:'Dan Popescu',email:'dan@pop.ro',products:'Azure Crane',date:'2024-05-26',total:'€8',status:'cancelled'},
+      {id:'PM-18418',customer:'Anna Weber',email:'anna@webde.de',products:'Ivory Cardholder + Earth Folio',date:'2024-05-26',total:'€155',status:'shipped'},
+      {id:'PM-18417',customer:'Tom Kovacs',email:'tom@kv.hu',products:'Ether Flow',date:'2024-05-25',total:'€18',status:'delivered'},
+      {id:'PM-18416',customer:'Maria Ionescu',email:'maria@io.ro',products:'Imperial Stack × 3',date:'2024-05-25',total:'€66',status:'delivered'},
+      {id:'PM-18415',customer:'Lena Fischer',email:'lena@fisch.de',products:'Zen Prism',date:'2024-05-24',total:'€8',status:'delivered'},
+      {id:'PM-18414',customer:'Paul Martin',email:'paul@martin.fr',products:'The Orix Wallet + Nebula Fold',date:'2024-05-24',total:'€203',status:'shipped'},
+    ]
+
+    const statusColors = {
+      processing: 'text-yellow-400 bg-yellow-900/20 border-yellow-500/30',
+      shipped: 'text-blue-400 bg-blue-900/20 border-blue-500/30',
+      delivered: 'text-green-400 bg-green-900/20 border-green-500/30',
+      cancelled: 'text-red-400 bg-red-900/20 border-red-500/30',
+    }
+
+    let currentFilter = ''
+
+    function renderOrders() {
+      const filtered = currentFilter ? orders.filter(o => o.status === currentFilter) : orders
+      document.getElementById('orders-table').innerHTML = filtered.map(o => `
+        <tr class="border-b border-outline-variant/5 hover:bg-primary/3 transition-colors group">
+          <td class="px-8 py-4 font-label-caps text-primary text-[12px]">${o.id}</td>
+          <td class="px-4 py-4">
+            <p class="text-on-surface text-sm">${o.customer}</p>
+            <p class="text-on-surface-variant text-[11px]">${o.email}</p>
+          </td>
+          <td class="px-4 py-4 text-on-surface-variant text-sm max-w-[160px] truncate">${o.products}</td>
+          <td class="px-4 py-4 text-on-surface-variant text-sm">${o.date}</td>
+          <td class="px-4 py-4 text-primary font-label-caps">${o.total}</td>
+          <td class="px-4 py-4">
+            <span class="font-label-caps text-[10px] px-3 py-1 rounded-full border ${statusColors[o.status]}">${o.status.toUpperCase()}</span>
+          </td>
+          <td class="px-4 py-4">
+            <select onchange="updateStatus('${o.id}', this.value)" class="bg-surface-container border border-outline-variant/20 rounded px-2 py-1 text-on-surface-variant font-label-caps text-[10px] outline-none cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
+              <option value="">CHANGE STATUS</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </td>
+        </tr>
+      `).join('')
+    }
+
+    document.querySelectorAll('.status-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentFilter = btn.dataset.status
+        document.querySelectorAll('.status-tab').forEach(b => {
+          b.classList.toggle('border-primary', b === btn)
+          b.classList.toggle('text-primary', b === btn)
+          b.classList.toggle('bg-primary/5', b === btn)
+          b.classList.toggle('border-outline-variant/30', b !== btn)
+          b.classList.toggle('text-on-surface-variant', b !== btn)
+        })
+        renderOrders()
+      })
+    })
+
+    window.updateStatus = (id, status) => {
+      if (status) alert(`Order ${id} status updated to "${status}" (demo — no actual data changed).`)
+    }
+
+    window.logout = () => {
+      sessionStorage.removeItem('pm_admin')
+      window.location.href = '/admin/login.html'
+    }
+
+    renderOrders()
+  </script>
+<script type="module" src="/src/site.js"></script>
+</body>
+</html>
+
+

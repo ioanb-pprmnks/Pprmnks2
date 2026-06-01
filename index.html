@@ -1,0 +1,742 @@
+﻿<!DOCTYPE html>
+<html class="dark" lang="ro">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PAPERMONKS | The Art of Folding Art</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,700;1,400&family=Inter:wght@300;400;600&family=Geist:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24; }
+  .glass-card { background: rgba(22,25,34,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(217,194,144,0.1); }
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #0c0e13; }
+  ::-webkit-scrollbar-thumb { background: #d9c290; border-radius: 10px; }
+  .cat-img { transition: transform 0.6s ease; }
+  .cat-card:hover .cat-img { transform: scale(1.04); }
+  .prod-img { transition: transform 0.5s ease; }
+  .prod-card:hover .prod-img { transform: scale(1.08); }
+
+  /* ─── AMBIENT BACKGROUND ─── */
+  #ambient-bg {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+    contain: strict;
+  }
+  .ab-blob {
+    position: absolute; border-radius: 50%;
+    filter: blur(90px); mix-blend-mode: screen; will-change: transform;
+  }
+  /* Puls: uneori stins, alteori cald și vizibil */
+  @keyframes flarePulse {
+    0%   { opacity: 0.52; }
+    38%  { opacity: 0.46; }
+    54%  { opacity: 0.08; }
+    60%  { opacity: 0.07; }
+    66%  { opacity: 0.11; }
+    80%  { opacity: 0.48; }
+    100% { opacity: 0.52; }
+  }
+  #blob1, #blob2, #blob3, #blob4, #blob5 { display: none; }
+  /* Poziția e controlată de JS (mouse follow) — top/left sunt 0 */
+  #blob6 {
+    width: 1100px; height: 1100px;
+    top: 0; left: 0;
+    background: radial-gradient(circle,
+      rgba(217,194,144,0.70) 0%,
+      rgba(170,110,245,0.34) 34%,
+      rgba(85,35,180,0.16)   56%,
+      transparent 72%
+    );
+    animation: flarePulse 26s ease-in-out infinite;
+    animation-delay: -9s;
+    will-change: transform, opacity;
+    pointer-events: none;
+  }
+  html { scroll-behavior: smooth; }
+  #particle-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* ─── COMPARISON SLIDER ─── */
+  .cmp-wrap {
+    position: relative; width: 100%; max-width: 1080px;
+    aspect-ratio: 1080 / 440; margin: 0 auto;
+    border-radius: 16px; overflow: hidden;
+    background: #0B0D12;
+    border: 1px solid rgba(217,194,144,0.18);
+    cursor: ew-resize; user-select: none; touch-action: pan-y;
+    outline: none;
+  }
+  .cmp-wrap:focus-visible { box-shadow: 0 0 0 2px #D9C290; }
+  .cmp-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .cmp-layer img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cmp-used {
+    z-index: 1;
+    /* worn look — TODO: replace with real worn-wallet photo */
+    filter: saturate(0.75) brightness(0.92) contrast(1.08);
+  }
+  .cmp-grain {
+    position: absolute; inset: 0; opacity: 0.08; pointer-events: none; z-index: 2;
+  }
+  .cmp-divider {
+    position: absolute; top: 0; bottom: 0; width: 2px;
+    background: rgba(237,237,234,0.92);
+    box-shadow: 0 0 14px rgba(237,237,234,0.25);
+    z-index: 4; pointer-events: none;
+    transform: translateX(-50%); transition: left 0.0s;
+  }
+  .cmp-handle {
+    position: absolute; top: 50%;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(237,237,234,0.97);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.55), 0 0 0 1.5px rgba(255,255,255,0.6);
+    transform: translate(-50%, -50%);
+    z-index: 5; display: flex; align-items: center; justify-content: center;
+    cursor: ew-resize; transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cmp-wrap:active .cmp-handle, .cmp-handle:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 6px 30px rgba(0,0,0,0.65), 0 0 0 2px rgba(217,194,144,0.5);
+  }
+  .cmp-label {
+    position: absolute; bottom: 18px;
+    padding: 5px 12px; border-radius: 4px;
+    background: rgba(11,13,18,0.78); backdrop-filter: blur(8px);
+    font-family: 'Geist', sans-serif; font-size: 10px;
+    letter-spacing: 0.22em; color: rgba(237,237,234,0.9);
+    z-index: 6; transition: opacity 0.25s ease; pointer-events: none;
+  }
+  .cmp-label-left  { left: 18px; }
+  .cmp-label-right { right: 18px; }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f6deaa", "primary-container": "#d9c290", "on-primary": "#3c2f09",
+          "surface": "#111318", "surface-container": "#1e1f25",
+          "surface-container-lowest": "#0c0e13", "on-surface": "#e2e2e9",
+          "on-surface-variant": "#cec5b7", "outline-variant": "#4c463b", "ink-black": "#11141B"
+        },
+        spacing: { "section-gap": "120px", "edge-margin-desktop": "80px", "container-max": "1440px" },
+        fontFamily: {
+          "headline-lg": ["Playfair Display"], "display-lg": ["Playfair Display"],
+          "label-caps": ["Geist"], "nav-link": ["Geist"], "body": ["Inter"]
+        },
+        fontSize: {
+          "headline-xl": ["48px", {lineHeight:"1.2",letterSpacing:"0.03em"}],
+          "display-lg": ["64px", {lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"300"}],
+          "label-caps": ["11px", {lineHeight:"1.0",letterSpacing:"0.2em",fontWeight:"500"}],
+          "nav-link": ["13px", {lineHeight:"1.0",letterSpacing:"0.15em"}]
+        }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="/src/site.css"/>
+</head>
+<body class="bg-surface text-on-surface overflow-x-hidden" style="font-family:'Inter',sans-serif;">
+
+<!-- ─── AMBIENT BACKGROUND ─── -->
+<div id="ambient-bg" aria-hidden="true">
+  <div class="ab-blob" id="blob1"></div>
+  <div class="ab-blob" id="blob2"></div>
+  <div class="ab-blob" id="blob3"></div>
+  <div class="ab-blob" id="blob4"></div>
+  <div class="ab-blob" id="blob5"></div>
+  <div class="ab-blob" id="blob6"></div>
+  <canvas id="particle-canvas"></canvas>
+</div>
+
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-10 md:px-20 h-20 bg-surface/90 backdrop-blur-md border-b border-primary/10">
+  <a href="/index.html" class="flex items-center">
+    <img src="/logo.png" alt="PAPERMONKS" class="h-7" style="filter: invert(87%) sepia(25%) saturate(700%) hue-rotate(3deg) brightness(107%);"/>
+  </a>
+  <div class="hidden md:flex gap-10">
+    <a href="/shop.html" class="text-on-surface-variant hover:text-primary transition-colors text-[13px] tracking-[0.15em]">SHOP</a>
+    <a href="/story.html" class="text-on-surface-variant hover:text-primary transition-colors text-[13px] tracking-[0.15em]">POVESTEA</a>
+    <a href="/artists.html" class="text-on-surface-variant hover:text-primary transition-colors text-[13px] tracking-[0.15em]">ARTIȘTI</a>
+    <a href="/contact.html" class="text-on-surface-variant hover:text-primary transition-colors text-[13px] tracking-[0.15em]">CONTACT</a>
+  </div>
+  <a href="/cart.html" class="relative text-primary hover:opacity-70 transition-opacity p-2">
+    <span class="material-symbols-outlined">shopping_bag</span>
+    <span class="cart-count hidden absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold leading-none">0</span>
+  </a>
+</nav>
+
+<main>
+  <!-- ─── HERO ─── -->
+  <section class="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(217,194,144,0.07),transparent_65%)] pointer-events-none"></div>
+    <div class="relative z-10 max-w-4xl mx-auto">
+      <p class="text-primary text-[11px] tracking-[0.4em] font-medium mb-8" style="font-family:'Geist',sans-serif;">THE ART OF FOLDING ART</p>
+      <h1 class="text-on-surface mb-8 leading-[1.05]" style="font-family:'Playfair Display',serif; font-size:clamp(48px,8vw,88px); font-weight:300; letter-spacing:-0.02em;">
+        THE ART OF <em class="text-primary not-italic">FOLDING</em> ART.
+      </h1>
+      <p class="text-on-surface-variant max-w-xl mx-auto mb-12 leading-relaxed text-base">
+        Transformăm arta creată de artiștii noștri în portofele funcționale, pliate fără lipici, fără cusături. Handmade în București.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+        <a href="/shop.html" class="px-10 py-4 rounded-full border border-primary text-primary text-[11px] tracking-[0.2em] hover:bg-primary/10 transition-all duration-300" style="font-family:'Geist',sans-serif;">
+          SHOP THE COLLECTION
+        </a>
+        <a href="/story.html" class="text-on-surface-variant hover:text-primary flex items-center gap-2 transition-colors text-sm">
+          Povestea noastră <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-30">
+      <span class="text-[10px] tracking-[0.3em]" style="font-family:'Geist',sans-serif;">SCROLL</span>
+      <div class="w-px h-10 bg-primary/50"></div>
+    </div>
+  </section>
+
+  <!-- ─── PRODUSE FEATURED ─── -->
+  <section class="bg-surface-container-lowest py-24">
+    <div class="max-w-[1440px] mx-auto px-10 md:px-20">
+      <div class="mb-14 flex justify-between items-end">
+        <div>
+          <p class="text-primary text-[11px] tracking-[0.3em] mb-3" style="font-family:'Geist',sans-serif;">COLECȚIILE NOASTRE</p>
+          <h2 style="font-family:'Playfair Display',serif; font-size:40px; font-weight:400;">Alege-ți arta</h2>
+        </div>
+        <a href="/shop.html" class="text-primary text-[11px] tracking-[0.2em] border-b border-primary pb-1 hover:opacity-70 transition-opacity hidden md:block" style="font-family:'Geist',sans-serif;">TOATE PRODUSELE →</a>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-5 max-w-[900px] mx-auto" id="featured-grid"></div>
+      <div class="text-center mt-12">
+        <a href="/shop.html" class="inline-block px-10 py-4 rounded-full border border-primary text-primary text-[11px] tracking-[0.2em] hover:bg-primary/10 transition-all" style="font-family:'Geist',sans-serif;">
+          SHOP ALL 22 PRODUCTS
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DE CE PAPERMONKS ─── -->
+  <section class="py-24 bg-surface-container reveal">
+    <div class="max-w-[1440px] mx-auto px-10 md:px-20 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      <div>
+        <p class="text-primary text-[11px] tracking-[0.3em] mb-4" style="font-family:'Geist',sans-serif;">CE FACEM</p>
+        <h2 style="font-family:'Playfair Display',serif; font-size:40px; font-weight:400; line-height:1.25;" class="mb-8">Portofel? Doar pliat?</h2>
+        <p class="text-on-surface-variant leading-relaxed mb-5">
+          Da. Am învățat din tehnicile antice de origami și am dezvoltat un sistem de pliere care permite produselor noastre să fie realizate <strong class="text-primary font-medium">fără lipici, cusături sau orice altă adăugire.</strong>
+        </p>
+        <p class="text-on-surface-variant leading-relaxed mb-8">
+          Produsele noastre sunt <strong class="text-primary font-medium">handmade</strong>, cu grijă și respect pentru designurile artiștilor noștri. Primul portofel a fost creat în 2018 și folosit zilnic peste 3 ani.
+        </p>
+        <a href="/story.html" class="text-primary text-[11px] tracking-[0.2em] border-b border-primary pb-1 hover:opacity-70 transition-opacity" style="font-family:'Geist',sans-serif;">CITEȘTE POVESTEA NOASTRĂ</a>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="glass-card p-7 rounded-xl">
+          <p class="text-primary text-4xl mb-2" style="font-family:'Playfair Display',serif; font-weight:300;">19g</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.2em]" style="font-family:'Geist',sans-serif;">ULTRA UȘOR</p>
+        </div>
+        <div class="glass-card p-7 rounded-xl">
+          <p class="text-primary text-4xl mb-2" style="font-family:'Playfair Display',serif; font-weight:300;">0</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.2em]" style="font-family:'Geist',sans-serif;">LIPICI SAU CUSĂTURI</p>
+        </div>
+        <div class="glass-card p-7 rounded-xl">
+          <p class="text-primary text-4xl mb-2" style="font-family:'Playfair Display',serif; font-weight:300;">3+</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.2em]" style="font-family:'Geist',sans-serif;">ANI REZISTENȚĂ</p>
+        </div>
+        <div class="glass-card p-7 rounded-xl">
+          <p class="text-primary text-4xl mb-2" style="font-family:'Playfair Display',serif; font-weight:300;">100%</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.2em]" style="font-family:'Geist',sans-serif;">ECO & RECICLABIL</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 02 / DURABILITY — 3 ANI MAI TÂRZIU ─── -->
+  <section class="py-24 bg-surface-container-lowest reveal">
+    <div class="max-w-[1200px] mx-auto px-10 md:px-20">
+      <div class="text-center mb-14">
+        <p class="text-primary text-[11px] tracking-[0.35em] mb-3" style="font-family:'Geist',sans-serif;">02 / DURABILITY</p>
+        <h2 class="mb-4" style="font-family:'Playfair Display',serif; font-size:clamp(32px,5vw,48px); font-weight:300;">3 ani mai târziu.</h2>
+        <p class="text-on-surface-variant max-w-md mx-auto text-sm leading-relaxed">
+          Portofelul care nu se rupe. Fără cusături de desfăcut, fără lipici de desprins.
+        </p>
+      </div>
+
+      <!-- Comparison slider -->
+      <div class="cmp-wrap"
+           id="cmp-slider"
+           role="slider"
+           aria-valuemin="0"
+           aria-valuemax="100"
+           aria-valuenow="50"
+           aria-label="Portofel nou vs 3 ani utilizat"
+           tabindex="0">
+
+        <!-- Bottom layer: NEW wallet -->
+        <div class="cmp-layer">
+          <img src="/images/products/big-05-pulsar-synaps.webp" alt="Portofel nou — Ziua unu"/>
+        </div>
+
+        <!-- Top layer: USED wallet (CSS filter worn look) -->
+        <!-- TODO: replace with real worn-wallet photo -->
+        <div class="cmp-layer cmp-used" id="cmp-top" style="clip-path: inset(0 50% 0 0);">
+          <img src="/images/products/big-05-pulsar-synaps.webp" alt="Portofel după 3 ani de utilizare zilnică"/>
+          <!-- SVG grain overlay for aged texture -->
+          <svg class="cmp-grain" xmlns="http://www.w3.org/2000/svg">
+            <filter id="pm-grain">
+              <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="4" stitchTiles="stitch"/>
+              <feColorMatrix type="saturate" values="0"/>
+            </filter>
+            <rect width="100%" height="100%" filter="url(#pm-grain)"/>
+          </svg>
+        </div>
+
+        <!-- Divider line -->
+        <div class="cmp-divider" id="cmp-divider" style="left:50%;"></div>
+
+        <!-- Drag handle -->
+        <div class="cmp-handle" id="cmp-handle" style="left:50%;" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#11141B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+            <line x1="15" y1="12" x2="9" y2="12" opacity="0"/>
+          </svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#11141B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:-6px;">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+
+        <!-- Labels -->
+        <div class="cmp-label cmp-label-left"  id="cmp-lbl-used">3 ANI UTILIZAT</div>
+        <div class="cmp-label cmp-label-right" id="cmp-lbl-new">NOU · ZIUA UNU</div>
+      </div>
+
+      <p class="text-center text-on-surface-variant text-sm mt-6" style="font-family:'Geist',sans-serif; letter-spacing:0.08em; opacity:0.6;">
+        Portofelul, după 3 ani de utilizare zilnică. — Still going strong.
+      </p>
+
+      <!-- Stats row -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-2xl mx-auto">
+        <div class="glass-card p-5 rounded-xl text-center">
+          <p class="text-primary text-3xl mb-1" style="font-family:'Playfair Display',serif; font-weight:300;">19g</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.2em]" style="font-family:'Geist',sans-serif;">ULTRA UȘOR</p>
+        </div>
+        <div class="glass-card p-5 rounded-xl text-center">
+          <p class="text-primary text-3xl mb-1" style="font-family:'Playfair Display',serif; font-weight:300;">0</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.2em]" style="font-family:'Geist',sans-serif;">LIPICI</p>
+        </div>
+        <div class="glass-card p-5 rounded-xl text-center">
+          <p class="text-primary text-3xl mb-1" style="font-family:'Playfair Display',serif; font-weight:300;">0</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.2em]" style="font-family:'Geist',sans-serif;">CUSĂTURI</p>
+        </div>
+        <div class="glass-card p-5 rounded-xl text-center">
+          <p class="text-primary text-3xl mb-1" style="font-family:'Playfair Display',serif; font-weight:300;">100%</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.2em]" style="font-family:'Geist',sans-serif;">RECICLABIL</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FEATURES STRIP ─── -->
+  <section class="py-20 reveal">
+    <div class="max-w-[1440px] mx-auto px-10 md:px-20 grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="flex items-start gap-5">
+        <span class="material-symbols-outlined text-primary text-3xl flex-shrink-0 mt-1">water_drop</span>
+        <div>
+          <h3 class="text-on-surface font-medium mb-2">Rezistent la apă și alcool</h3>
+          <p class="text-on-surface-variant text-sm leading-relaxed">Materialul de bază rezistă în buzunar chiar dacă faci sporturi extreme sau vrei să treci cu mașina peste el.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-5">
+        <span class="material-symbols-outlined text-primary text-3xl flex-shrink-0 mt-1">eco</span>
+        <div>
+          <h3 class="text-on-surface font-medium mb-2">Eco-friendly & reciclabil</h3>
+          <p class="text-on-surface-variant text-sm leading-relaxed">Material special și tehnici de imprimare eco-friendly. Produs integral în studioul nostru — amprentă de carbon minimă.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-5">
+        <span class="material-symbols-outlined text-primary text-3xl flex-shrink-0 mt-1">back_hand</span>
+        <div>
+          <h3 class="text-on-surface font-medium mb-2">Handmade cu grijă</h3>
+          <p class="text-on-surface-variant text-sm leading-relaxed">Fiecare portofel este pliat manual, cu respect pentru designul artistului. Fiecare piesă e unică.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PREȚURI CTA ─── -->
+  <section class="py-24 bg-surface-container-lowest text-center reveal">
+    <div class="max-w-3xl mx-auto px-8">
+      <p class="text-primary text-[11px] tracking-[0.3em] mb-4" style="font-family:'Geist',sans-serif;">PREȚURI</p>
+      <h2 class="mb-12" style="font-family:'Playfair Display',serif; font-size:44px; font-weight:300;">Ne pasă de buzunarul tău.</h2>
+      <div class="grid grid-cols-3 gap-6 mb-12 max-w-xl mx-auto">
+        <div class="glass-card p-6 rounded-xl">
+          <p class="text-primary text-3xl mb-2" style="font-family:'Playfair Display',serif; font-weight:300;">€18</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.15em]" style="font-family:'Geist',sans-serif;">BIG WALLET</p>
+        </div>
+        <div class="glass-card p-6 rounded-xl">
+          <p class="text-primary text-3xl mb-2" style="font-family:'Playfair Display',serif; font-weight:300;">€8</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.15em]" style="font-family:'Geist',sans-serif;">MINI WALLET</p>
+        </div>
+        <div class="glass-card p-6 rounded-xl border border-primary/20">
+          <p class="text-primary text-3xl mb-2" style="font-family:'Playfair Display',serif; font-weight:300;">€22</p>
+          <p class="text-on-surface-variant text-[10px] tracking-[0.15em]" style="font-family:'Geist',sans-serif;">BUNDLE</p>
+        </div>
+      </div>
+      <a href="/shop.html" class="inline-block px-12 py-4 rounded-full border border-primary text-primary text-[11px] tracking-[0.2em] hover:bg-primary/10 transition-all" style="font-family:'Geist',sans-serif;">
+        ALEGE-ȚI PORTOFELUL
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── GALERIA 21 ─── -->
+  <section class="py-24 reveal">
+    <div class="max-w-[1440px] mx-auto px-10 md:px-20 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      <div>
+        <p class="text-primary text-[11px] tracking-[0.3em] mb-4" style="font-family:'Geist',sans-serif;">IMPACT</p>
+        <h2 class="mb-6" style="font-family:'Playfair Display',serif; font-size:44px; font-weight:300; line-height:1.2;">Arta dincolo de obiect.</h2>
+        <p class="text-on-surface-variant leading-relaxed mb-8">
+          O parte din profiturile noastre susțin mișcarea artei urbane. Dezvoltăm împreună cu artiștii un concept nou — @galeria21.bucuresti.
+        </p>
+        <a href="https://www.instagram.com/galeria21.bucuresti" target="_blank" class="inline-flex items-center gap-3 text-primary text-[11px] tracking-[0.2em] border-b border-primary pb-1 hover:opacity-70 transition-opacity" style="font-family:'Geist',sans-serif;">
+          @GALERIA21.BUCURESTI <span class="material-symbols-outlined text-[16px]">north_east</span>
+        </a>
+      </div>
+      <div class="glass-card p-10 rounded-xl text-center">
+        <p class="text-primary mb-3" style="font-family:'Playfair Display',serif; font-size:72px; font-weight:300; line-height:1;">12%</p>
+        <p class="text-on-surface-variant text-[10px] tracking-[0.2em] mb-6" style="font-family:'Geist',sans-serif;">DIN PROFITURI MERG SPRE ARTIȘTI</p>
+        <p class="text-on-surface-variant text-sm leading-relaxed">Susținem rezidenți artistici, expoziții și colecții noi. Când cumperi un portofel Papermonks, investești și în arta urbană românească.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-surface-container-lowest py-16 border-t border-outline-variant/10">
+  <div class="max-w-[1440px] mx-auto px-10 md:px-20">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      <div class="md:col-span-2">
+        <p class="text-primary tracking-widest uppercase mb-3" style="font-family:'Playfair Display',serif; font-size:20px;">PAPERMONKS</p>
+        <p class="text-on-surface-variant text-sm leading-relaxed max-w-xs">The art of folding art. Portofele handmade fără lipici, fără cusături. Born in București.</p>
+      </div>
+      <div class="flex flex-col gap-3">
+        <p class="text-primary text-[10px] tracking-[0.25em] mb-1" style="font-family:'Geist',sans-serif;">SHOP</p>
+        <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="/shop.html?category=big">Big Wallet — €18</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="/shop.html?category=mini">Mini Wallet — €8</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="/shop.html?category=bundle">Bundle — €22</a>
+      </div>
+      <div class="flex flex-col gap-3">
+        <p class="text-primary text-[10px] tracking-[0.25em] mb-1" style="font-family:'Geist',sans-serif;">CONTACT</p>
+        <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="https://www.instagram.com/papermonks.ro" target="_blank">@papermonks.ro</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="mailto:papermonksde@gmail.com">papermonksde@gmail.com</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="tel:+017631723486">017 631 723 486</a>
+      </div>
+    </div>
+    <div class="border-t border-outline-variant/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <span class="text-on-surface-variant/40 text-[10px] tracking-widest" style="font-family:'Geist',sans-serif;">© 2025 PAPERMONKS. THE ART OF FOLDING ART.</span>
+      <a href="/admin/login.html" class="text-on-surface-variant/30 hover:text-on-surface-variant text-[10px] transition-colors" style="font-family:'Geist',sans-serif;">ADMIN</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { products } from '/src/products.js'
+  import { cart } from '/src/cart.js'
+
+  // Featured grid — 4 diverse picks
+  const picks = [products[0], products[4], products[14], products[17]]
+  document.getElementById('featured-grid').innerHTML = picks.map(p => `
+    <a href="/product.html?id=${p.id}" class="group block">
+      <div class="relative overflow-hidden rounded-lg bg-surface-container" style="aspect-ratio:3/4;">
+        <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-400 group-hover:scale-[1.07]" src="${p.image}" alt="${p.name}" loading="lazy" decoding="async"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <div class="absolute top-3 left-3">
+          <span class="bg-black/75 text-primary text-[9px] px-2 py-0.5 rounded-full border border-primary/20" style="font-family:'Geist',sans-serif; letter-spacing:0.12em;">${p.edition}</span>
+        </div>
+      </div>
+      <div class="pt-3 px-1">
+        <p class="text-on-surface-variant text-[9px] tracking-[0.15em] mb-0.5" style="font-family:'Geist',sans-serif;">${p.artist.toUpperCase()}</p>
+        <p class="text-primary text-[15px] group-hover:opacity-80 transition-opacity leading-tight" style="font-family:'Playfair Display',serif;">${p.shortName}</p>
+        <span class="text-on-surface text-[14px]" style="font-family:'Playfair Display',serif;">€${p.price}</span>
+      </div>
+    </a>
+  `).join('')
+
+  cart.updateBadges()
+
+  // Scroll reveal — rootMargin pozitiv declanșează animația cu 120px înainte
+  // ca utilizatorul să ajungă la element, deci niciodată nu vede "popping"
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target) } })
+  }, { rootMargin: '0px 0px 120px 0px', threshold: 0 })
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el))
+</script>
+<script>
+// ─── PREFERS-REDUCED-MOTION ───
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+// Mouse shared — folosit de particule și de respingerea blob-ului
+let _mx = -9999, _my = -9999
+window.addEventListener('mousemove', e => { _mx = e.clientX; _my = e.clientY }, { passive: true })
+
+if (prefersReduced) {
+  const bg = document.getElementById('ambient-bg')
+  if (bg) bg.style.display = 'none'
+} else {
+  // ─── PARTICLE CANVAS ───
+  ;(function() {
+    const canvas = document.getElementById('particle-canvas')
+    if (!canvas) return
+    // Dezactivat pe mobile — economisește baterie și elimină jank
+    if (window.innerWidth < 768) { canvas.style.display = 'none'; return }
+    const ctx = canvas.getContext('2d')
+    let W = 0, H = 0, particles = [], paused = false, visible = true
+    let mx = -9999, my = -9999
+    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY }, { passive: true })
+    const REPULSE_R = 115, REPULSE_F = 0.28, LERP_BACK = 0.022, MAX_SPEED = 2.2
+    const COUNT = 60   // redus de la 90
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight }
+    function init() {
+      particles = Array.from({ length: COUNT }, () => {
+        const bvx = (Math.random() - 0.5) * 0.22
+        const bvy = (Math.random() - 0.5) * 0.22
+        return {
+          x: Math.random()*W, y: Math.random()*H,
+          r: Math.random()*1.0+0.45,
+          vx: bvx, vy: bvy, baseVx: bvx, baseVy: bvy,
+          base: Math.random()*0.26+0.10,
+          phase: Math.random()*Math.PI*2,
+          spd: Math.random()*0.018+0.005
+        }
+      })
+    }
+    function tick() {
+      if (!paused && visible) {
+        ctx.clearRect(0, 0, W, H)
+        for (const p of particles) {
+          const dx = p.x - mx, dy = p.y - my
+          const dist = Math.sqrt(dx*dx + dy*dy)
+          if (dist < REPULSE_R && dist > 0.5) {
+            const t = 1 - dist / REPULSE_R
+            const f = REPULSE_F * t * t
+            p.vx += (dx/dist)*f; p.vy += (dy/dist)*f
+          }
+          p.vx += (p.baseVx - p.vx) * LERP_BACK
+          p.vy += (p.baseVy - p.vy) * LERP_BACK
+          const spd = Math.sqrt(p.vx*p.vx + p.vy*p.vy)
+          if (spd > MAX_SPEED) { p.vx = p.vx/spd*MAX_SPEED; p.vy = p.vy/spd*MAX_SPEED }
+          p.x += p.vx; p.y += p.vy; p.phase += p.spd
+          if (p.x < -2) p.x = W+2
+          if (p.x > W+2) p.x = -2
+          if (p.y < -2) p.y = H+2
+          if (p.y > H+2) p.y = -2
+          const alpha = p.base * (0.7 + 0.3 * Math.sin(p.phase))
+          ctx.beginPath()
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2)
+          ctx.fillStyle = `rgba(237,237,234,${alpha.toFixed(3)})`
+          ctx.fill()
+        }
+      }
+      requestAnimationFrame(tick)
+    }
+    // Pauză când canvas-ul nu e vizibil (user a scrollat departe de hero)
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting }, { threshold: 0 })
+    io.observe(canvas)
+    document.addEventListener('visibilitychange', () => { paused = document.hidden })
+    window.addEventListener('resize', () => { resize(); init() }, { passive: true })
+    resize(); init(); tick()
+  })()
+
+  // ─── BLOB DRIFT AUTONOM + MOUSE REPULSION ───
+  ;(function() {
+    const blob = document.getElementById('blob6')
+    if (!blob) return
+    const HALF = 550
+    const B_REPULSE_R = 380   // raza în care mouse-ul respinge blob-ul
+    const B_REPULSE_F = 3.2   // forța de respingere
+    const B_MAX_SPD   = 5.5   // viteză maximă px/frame
+    let bx = window.innerWidth * 0.45, by = window.innerHeight * 0.35
+    let bvx = 0.4, bvy = 0.25, t = 0
+    ;(function blobTick() {
+      t += 0.008
+      // Drift natural: unde sinusoidale compuse → traiectorie organică, niciodată repetitivă
+      const tvx = Math.sin(t * 0.72) * 0.9 + Math.cos(t * 0.31) * 0.45
+      const tvy = Math.cos(t * 0.55) * 0.65 + Math.sin(t * 0.43 + 1.2) * 0.35
+      bvx += (tvx - bvx) * 0.018
+      bvy += (tvy - bvy) * 0.018
+      // Respingere mouse
+      const dx = bx - _mx, dy = by - _my
+      const dist = Math.sqrt(dx*dx + dy*dy)
+      if (dist < B_REPULSE_R && dist > 1) {
+        const f = B_REPULSE_F * Math.pow(1 - dist / B_REPULSE_R, 2)
+        bvx += (dx / dist) * f
+        bvy += (dy / dist) * f
+      }
+      // Cap viteză
+      const spd = Math.sqrt(bvx*bvx + bvy*bvy)
+      if (spd > B_MAX_SPD) { bvx = bvx/spd*B_MAX_SPD; bvy = bvy/spd*B_MAX_SPD }
+      bx += bvx; by += bvy
+      // Pull-back soft la marginile ecranului
+      const W = window.innerWidth, H = window.innerHeight
+      const mg = 160
+      if (bx < mg)     bvx += (mg - bx) * 0.004
+      if (bx > W - mg) bvx -= (bx - W + mg) * 0.004
+      if (by < mg)     bvy += (mg - by) * 0.003
+      if (by > H - mg) bvy -= (by - H + mg) * 0.003
+      blob.style.transform = `translate(${bx - HALF}px, ${by - HALF}px)`
+      requestAnimationFrame(blobTick)
+    })()
+  })()
+
+  // ─── HERO PARALLAX ───
+  ;(function() {
+    const heroInner = document.querySelector('main section:first-child .relative.z-10')
+    if (!heroInner) return
+    const heroH = window.innerHeight
+    window.addEventListener('scroll', () => {
+      const sy = window.scrollY
+      if (sy > heroH) return
+      const p = sy / heroH
+      heroInner.style.transform = `translateY(${sy * 0.18}px)`
+      heroInner.style.opacity   = `${Math.max(0, 1 - p * 1.5)}`
+    }, { passive: true })
+  })()
+}
+
+// ─── STAGGERED GLASS CARD REVEALS ───
+;(function() {
+  const cards = document.querySelectorAll('.glass-card')
+  const groups = new Map()
+  cards.forEach(card => {
+    const p = card.parentElement
+    if (!groups.has(p)) groups.set(p, [])
+    groups.get(p).push(card)
+  })
+  groups.forEach((kids, parent) => {
+    if (kids.length < 2) return
+    kids.forEach(k => {
+      k.style.opacity = '0'
+      k.style.transform = 'translateY(24px)'
+      k.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)'
+    })
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      kids.forEach((k, i) => setTimeout(() => {
+        k.style.opacity = '1'; k.style.transform = 'translateY(0)'
+      }, 180 + i * 110))
+      io.disconnect()
+    }, { threshold: 0.1 })
+    io.observe(parent)
+  })
+})()
+
+// ─── STAGGERED CATEGORY CARDS ───
+;(function() {
+  const grid = document.getElementById('img-big')?.closest('.grid')
+  if (!grid) return
+  const kids = Array.from(grid.children)
+  kids.forEach(k => {
+    k.style.opacity = '0'
+    k.style.transform = 'translateY(32px)'
+    k.style.transition = 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1)'
+  })
+  const io = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return
+    kids.forEach((k, i) => setTimeout(() => {
+      k.style.opacity = '1'; k.style.transform = 'translateY(0)'
+    }, i * 140))
+    io.disconnect()
+  }, { threshold: 0.1 })
+  io.observe(grid)
+})()
+
+// ─── STAGGERED FEATURES STRIP ───
+;(function() {
+  const section = document.querySelector('section.py-20')
+  if (!section) return
+  const grid = section.querySelector('.grid')
+  if (!grid) return
+  const kids = Array.from(grid.children)
+  kids.forEach(k => {
+    k.style.opacity = '0'
+    k.style.transform = 'translateY(20px)'
+    k.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)'
+  })
+  const io = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return
+    kids.forEach((k, i) => setTimeout(() => {
+      k.style.opacity = '1'; k.style.transform = 'translateY(0)'
+    }, i * 130))
+    io.disconnect()
+  }, { threshold: 0.15 })
+  io.observe(grid)
+})()
+
+// ─── STAGGERED FEATURED PRODUCTS ───
+;(function() {
+  function tryStagger() {
+    const grid = document.getElementById('featured-grid')
+    if (!grid || grid.children.length === 0) { setTimeout(tryStagger, 150); return }
+    const kids = Array.from(grid.children)
+    kids.forEach(k => {
+      k.style.opacity = '0'
+      k.style.transform = 'translateY(20px)'
+      k.style.transition = 'opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1)'
+    })
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      kids.forEach((k, i) => setTimeout(() => {
+        k.style.opacity = '1'; k.style.transform = 'translateY(0)'
+      }, i * 90))
+      io.disconnect()
+    }, { threshold: 0.1 })
+    io.observe(grid)
+  }
+  tryStagger()
+})()
+
+// ─── COMPARISON SLIDER ───
+;(function() {
+  const wrap    = document.getElementById('cmp-slider')
+  if (!wrap) return
+  const top     = document.getElementById('cmp-top')
+  const divider = document.getElementById('cmp-divider')
+  const handle  = document.getElementById('cmp-handle')
+  const lblUsed = document.getElementById('cmp-lbl-used')
+  const lblNew  = document.getElementById('cmp-lbl-new')
+  let pos = 50, active = false
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)) }
+  function applyPos() {
+    const clip = 100 - pos
+    top.style.clipPath = `inset(0 ${clip}% 0 0)`
+    divider.style.left = pos + '%'
+    handle.style.left  = pos + '%'
+    wrap.setAttribute('aria-valuenow', Math.round(pos))
+    lblUsed.style.opacity = pos > 18 ? '1' : '0'
+    lblNew.style.opacity  = pos < 82 ? '1' : '0'
+  }
+  function fromEvent(clientX) {
+    const r = wrap.getBoundingClientRect()
+    pos = clamp(((clientX - r.left) / r.width) * 100, 0, 100)
+    applyPos()
+  }
+  wrap.addEventListener('mousedown',   e => { active = true; fromEvent(e.clientX); e.preventDefault() })
+  window.addEventListener('mousemove', e => { if (active) fromEvent(e.clientX) })
+  window.addEventListener('mouseup',   () => { active = false })
+  wrap.addEventListener('pointerdown', e => { active = true; wrap.setPointerCapture(e.pointerId); fromEvent(e.clientX); e.preventDefault() })
+  wrap.addEventListener('pointermove', e => { if (active) fromEvent(e.clientX) })
+  wrap.addEventListener('pointerup',   () => { active = false })
+  wrap.addEventListener('touchstart',  e => { active = true; fromEvent(e.touches[0].clientX) }, { passive: true })
+  wrap.addEventListener('touchmove',   e => { if (active) fromEvent(e.touches[0].clientX) },    { passive: true })
+  wrap.addEventListener('touchend',    () => { active = false })
+  wrap.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft')  { pos = clamp(pos-2, 0, 100); applyPos(); e.preventDefault() }
+    if (e.key === 'ArrowRight') { pos = clamp(pos+2, 0, 100); applyPos(); e.preventDefault() }
+    if (e.key === 'Home')       { pos = 0;   applyPos(); e.preventDefault() }
+    if (e.key === 'End')        { pos = 100; applyPos(); e.preventDefault() }
+  })
+  applyPos()
+})()
+</script>
+<script type="module" src="/src/site.js"></script>
+</body>
+</html>
+
+
